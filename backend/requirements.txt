@@ -1,0 +1,7 @@
+fastapi
+fastapi_jwt_auth
+celery
+psycopg2-binary
+uvicorn
+pydantic
+python-multipart
