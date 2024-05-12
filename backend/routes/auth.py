@@ -1,14 +1,10 @@
-from fastapi import HTTPException, Depends, Request, APIRouter
-from fastapi.responses import JSONResponse
+from fastapi import HTTPException, Depends, APIRouter
 from fastapi_jwt_auth import AuthJWT
-from fastapi_jwt_auth.exceptions import AuthJWTException
-from pydantic import BaseModel
+from db.driver import DbDriver
 from config import Settings
-
-
-class User(BaseModel):
-    username: str
-    password: str
+from db.user import create_user, get_db_user
+from uuid import UUID
+from models.user import User
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -19,16 +15,39 @@ def get_config():
     return Settings()
 
 
+def authorised_user(Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+    user_uid = UUID(Authorize.get_jwt_subject())
+    return user_uid
+
+
+@router.post("/register")
+def register(user: User, cur=Depends(DbDriver.db_cursor)):
+    db_user = get_db_user(cur, user.username)
+    if db_user != None:
+        raise HTTPException(
+            status_code=400, detail=f"Username already exists - {user.username}"
+        )
+    create_user(
+        cur, username=user.username, password_hash=User.hash_password(user.password)
+    )
+    return {"msg": "Successfully register"}
+
+
 @router.post("/login")
-def login(user: User, Authorize: AuthJWT = Depends()):
-    if user.username != "test" or user.password != "test":
+def login(user: User, Authorize: AuthJWT = Depends(), cur=Depends(DbDriver.db_cursor)):
+    db_user = get_db_user(cur, user.username)
+    if db_user is None or (
+        db_user is not None
+        and user.hash_password(user.password) != db_user.password_hash
+    ):
         raise HTTPException(status_code=401, detail="Bad username or password")
 
-    # Create the tokens and passing to set_access_cookies or set_refresh_cookies
-    access_token = Authorize.create_access_token(subject=user.username)
-    refresh_token = Authorize.create_refresh_token(subject=user.username)
+    print(db_user.uid)
+    print(str(db_user.uid))
+    access_token = Authorize.create_access_token(subject=str(db_user.uid))
+    refresh_token = Authorize.create_refresh_token(subject=str(db_user.uid))
 
-    # Set the JWT cookies in the response
     Authorize.set_access_cookies(access_token)
     Authorize.set_refresh_cookies(refresh_token)
     return {"msg": "Successfully login"}
@@ -49,16 +68,3 @@ def logout(Authorize: AuthJWT = Depends()):
 
     Authorize.unset_jwt_cookies()
     return {"msg": "Successfully logout"}
-
-
-# @router.get("/protected")
-def protected(Authorize: AuthJWT = Depends()):
-    """
-    We do not need to make any changes to our protected endpoints. They
-    will all still function the exact same as they do when sending the
-    JWT in via a headers instead of a cookies
-    """
-    Authorize.jwt_required()
-
-    current_user = Authorize.get_jwt_subject()
-    return {"user": current_user}

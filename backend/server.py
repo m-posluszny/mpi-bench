@@ -3,14 +3,20 @@ from fastapi import FastAPI, APIRouter
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request
+from db.driver import DbDriver
+from config import DATABASE_CONFIG
 import routes.bin as bin
 import routes.auth as auth
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # get_connection()
+    db = DbDriver(**DATABASE_CONFIG)
+    # db.load_sql_file("./db/schema.sql")
+    # db.load_sql_file("./db/triggers.sql")
+    # db.load_sql_file("./db/views.sql")
     yield
+    db.close_connection()
 
 
 app = FastAPI(lifespan=lifespan, docs_url="/api/docs", redoc_url="/api/redoc")

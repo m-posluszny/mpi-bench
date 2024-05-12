@@ -1,9 +1,10 @@
 from worker import worker_app
+from models.bench import Benchmark
+import db.results as db_results
 
 
 @worker_app.task
-def add(x, y):
-    return x + y
+def run_benchmark(bench: Benchmark): ...
 
 
 @worker_app.task

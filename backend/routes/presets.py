@@ -1,0 +1,81 @@
+from fastapi import Depends, HTTPException, APIRouter
+from typing import List
+from db.driver import DbDriver
+from routes.auth import authorised_user
+from uuid import UUID
+from models.presets import Preset, PresetRequest
+
+router = APIRouter(prefix="/api/presets")
+
+
+@router.get("", response_model=List[Preset])
+async def get_presets(
+    user_uid: UUID = Depends(authorised_user), cur=Depends(DbDriver.db_cursor)
+):
+    sql = "SELECT preset_id, owner_id, description FROM presets WHERE owner_id = %s;"
+    cur.execute(sql, (str(user_uid),))
+    presets = cur.fetchall()
+    return [
+        {"preset_id": preset[0], "owner_id": preset[1], "description": preset[2]}
+        for preset in presets
+    ]
+
+
+@router.post("", response_model=Preset)
+async def create_preset(
+    preset: PresetRequest,
+    user_uid: UUID = Depends(authorised_user),
+    cur=Depends(DbDriver.db_cursor),
+):
+    sql = "INSERT INTO presets (owner_id, description) VALUES (%s, %s) RETURNING preset_id, owner_id, description;"
+    cur.execute(sql, (str(user_uid), preset.description))
+    new_preset = cur.fetchone()
+    return {
+        "preset_id": new_preset[0],
+        "owner_id": new_preset[1],
+        "description": new_preset[2],
+    }
+
+
+@router.put("{preset_id}", response_model=Preset)
+async def update_preset(
+    preset_id: UUID,
+    preset: PresetRequest,
+    user_uid: UUID = Depends(authorised_user),
+    cur=Depends(DbDriver.db_cursor),
+):
+    cur.execute("SELECT owner_id FROM presets WHERE preset_id = %s;", (str(preset_id),))
+    existing_preset = cur.fetchone()
+    if not existing_preset or existing_preset[0] != str(user_uid):
+        raise HTTPException(
+            status_code=404 if not existing_preset else 401,
+            detail="Not found or Unauthorized",
+        )
+
+    cur.execute(
+        "UPDATE presets SET description = %s WHERE preset_id = %s RETURNING preset_id, owner_id, description;",
+        (preset.description, str(preset_id)),
+    )
+    updated_preset = cur.fetchone()
+    return {
+        "preset_id": updated_preset[0],
+        "owner_id": updated_preset[1],
+        "description": updated_preset[2],
+    }
+
+
+@router.delete("{preset_id}")
+async def delete_preset(
+    preset_id: UUID,
+    user_uid: UUID = Depends(authorised_user),
+    cur=Depends(DbDriver.db_cursor),
+):
+    cur.execute("SELECT owner_id FROM presets WHERE preset_id = %s;", (str(preset_id),))
+    preset = cur.fetchone()
+    if not preset or preset[0] != str(user_uid):
+        raise HTTPException(
+            status_code=404 if not preset else 401, detail="Not found or Unauthorized"
+        )
+    sql_delete = "DELETE FROM presets WHERE preset_id = %s;"
+    cur.execute(sql_delete, (str(preset_id),))
+    return {"message": "Preset deleted"}

@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 
+BIN_UPLOAD_DIR = "./storage/binaries"
+
 DATABASE_CONFIG = {
-    "user": "your_username",
-    "password": "your_password",
-    "host": "your_host",
-    "port": "your_port",  # Default is 5432
-    "database": "your_database",
+    "user": "postgres",
+    "password": "SETPWDHERE",
+    "host": "localhost",
+    "port": 5432,
+    "dbname": "postgres",
 }
 
 BROKER_URL = "redis://redis:6379/0"
