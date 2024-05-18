@@ -1,24 +1,20 @@
 services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-
-  backend:
-    build: ./backend
-    ports:
-      - "8000:8000"
-
   redis:
     image: redis
     hostname: redis
     ports:
       - "6379:6379"
+    # volumes:
+    #   - ./redisstore:/data
 
   postgres:
     image: postgres:15
     hostname: postgres
+    user: postgres
     environment:
       - POSTGRES_PASSWORD=SETPWDHERE
+      - POSTGRES_USER=postgres
     ports:
       - 5432:5432
+    # volumes:
+    #   - ./dbstore:/var/lib/postgresql/data
