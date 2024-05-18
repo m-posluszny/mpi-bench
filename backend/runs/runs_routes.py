@@ -7,7 +7,7 @@ from uuid import UUID
 from runs import runs_db
 
 
-router = APIRouter(prefix="/runs")
+router = APIRouter(prefix="/runs", tags=["runs"])
 
 
 @router.get("/", response_model=List[Run])

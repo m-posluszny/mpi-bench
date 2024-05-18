@@ -8,7 +8,7 @@ from presets import preset_db
 from presets.preset_model import PresetRequest, Preset
 
 
-router = APIRouter(prefix="/presets")
+router = APIRouter(prefix="/presets", tags=["presets"])
 
 
 @router.get("/", response_model=List[Run])

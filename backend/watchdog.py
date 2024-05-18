@@ -1,4 +1,5 @@
 import asyncio
+import threading
 from worker import db
 from tasks import run_benchmark
 
@@ -13,10 +14,12 @@ def watch_for_triggers():
         conn.notifies.clear()
 
 
-async def watchdog():
+def watchdog():
     while True:
         watch_for_triggers()
 
 
-async def start_watchdog():
-    asyncio.create_task(watchdog())
+def start_watchdog():
+    thread = threading.Thread(target=watchdog, daemon=True)
+    thread.start()
+    return thread

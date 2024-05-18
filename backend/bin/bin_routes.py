@@ -11,7 +11,7 @@ import shutil
 import config
 import os
 
-router = APIRouter(prefix="/binaries")
+router = APIRouter(prefix="/binaries", tags=["binaries"])
 
 
 @router.get("/", response_model=ManyModel[BinMetaResponse])
