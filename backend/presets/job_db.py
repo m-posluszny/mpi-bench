@@ -5,8 +5,8 @@ from db.driver import cursor
 from presets.preset_model import PresetJobRequest, PresetJob
 
 
-def create(cur: cursor, request: PresetJobRequest, owner_uid: UUID):
-    cur.execute()
+def create(cur: cursor, r: PresetJobRequest, owner_uid: UUID):
+    cur.execute("call begin_job(%s, %s)", (str(r.preset_uid), str(r.binary_uid)))
     row = cur.fetchone()
     if not row:
         raise Exception("this should not happen")

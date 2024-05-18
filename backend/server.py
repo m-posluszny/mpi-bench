@@ -9,7 +9,6 @@ from runs import runs_routes
 from presets import preset_routes
 from worker import db
 from watchdog import start_watchdog
-import threading
 import sys
 
 

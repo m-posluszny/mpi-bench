@@ -2,12 +2,24 @@ from uuid import UUID
 from typing import List, Optional
 from fastapi import HTTPException
 from db.driver import cursor
-from presets.preset_model import PresetJobRequest, PresetJob
+from presets.preset_model import PresetRequest, PresetJob
 
 
-def create(cur: cursor, request: PresetJobRequest, owner_uid: UUID):
+def create(cur: cursor, r: PresetRequest, owner_uid: UUID):
+    cur.execute(
+        "insert into presets (name, description, owner_uid) values (%s, %s, %s) returning uid",
+        (r.name, r.description, str(owner_uid)),
+    )
+    row = cur.fetchone()
+    if not row:
+        raise Exception("this should not happen")
+    uid = UUID(row[0])
 
-    cur.execute()
+    args = ((p.flags, p.n_proc, uid) for p in r.parameters)
+    args_str = ",".join(cur.mogrify("(%s,%s, %s)", a) for a in args)  # type: ignore
+    cur.execute(
+        "INSERT INTO parameters (flags, n_proc, preset_uid) VALUES " + args_str,
+    )
     row = cur.fetchone()
     if not row:
         raise Exception("this should not happen")

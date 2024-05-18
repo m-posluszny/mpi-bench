@@ -15,7 +15,7 @@ class Status(str, Enum):
 
 class PresetRequest(CustomBaseModel):
     name: str
-    description: str
+    description: str = ""
     owner_uid: UUID
     parameters: List[ParametersRequest]
 
@@ -38,11 +38,11 @@ class Preset(PresetRequest):
 
 
 class PresetJobRequest(CustomBaseModel):
-    uid: UUID
     preset_uid: UUID
     binary_uid: UUID
 
 
 class PresetJob(PresetJobRequest):
+    uid: UUID
     runs: List[Run]
     created: float
