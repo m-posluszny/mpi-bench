@@ -3,18 +3,29 @@ from fastapi import FastAPI, APIRouter
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request
-from db.driver import DbDriver
-from config import DATABASE_CONFIG
-import routes.bin as bin
-import routes.auth as auth
+import bin.bin_routes as bin_routes
+import auth.auth as auth
+import runs.runs_routes as runs_routes
+from worker import db
+from watchdog import start_watchdog
+import sys
+
+
+def receive_signal(signalNumber, frame):
+    sys.exit()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    db = DbDriver(**DATABASE_CONFIG)
-    # db.load_sql_file("./db/schema.sql")
-    # db.load_sql_file("./db/triggers.sql")
-    # db.load_sql_file("./db/views.sql")
+    import signal
+
+    signal.signal(signal.SIGINT, receive_signal)
+    for cur in db.db_cursor():
+        db.load_sql_file(cur, "./db/schemas/schema.sql")
+        db.load_sql_file(cur, "./db/schemas/functions.sql")
+        db.load_sql_file(cur, "./db/schemas/triggers.sql")
+        db.load_sql_file(cur, "./db/schemas/views.sql")
+    await start_watchdog()
     yield
     db.close_connection()
 
@@ -23,10 +34,11 @@ app = FastAPI(lifespan=lifespan, docs_url="/api/docs", redoc_url="/api/redoc")
 
 router = APIRouter(prefix="/api")
 router.include_router(auth.router)
-router.include_router(bin.router)
+router.include_router(bin_routes.router)
+router.include_router(runs_routes.router)
 app.include_router(router)
 
 
 @app.exception_handler(AuthJWTException)
 def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})  # type: ignore

@@ -4,7 +4,7 @@ from backend.db.driver import conn
 GET_BENCH_QUERY = "select * from benchmarks where owner_uid = %s;"
 
 
-def create_benchmark(data: BenchmarkRequest, user_id: int):
+def create_benchmark(data: BenchmarkRequest, user_uid: int):
     return Benchmark
 
 

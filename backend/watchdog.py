@@ -1,14 +1,22 @@
-def watch_for_triggers(): ...
+import asyncio
+from worker import db
+from tasks import run_benchmark
 
 
-def binaries_cleanup(): ...
+def watch_for_triggers():
+    for cur, conn in db.db_session():
+        cur.execute("LISTEN new_run")
+        conn.poll()
+        for notify in conn.notifies:
+            run_benchmark(notify.payload)
+            print(notify.payload)
+        conn.notifies.clear()
 
 
-def main():
-    watch_for_triggers()
-    binaries_cleanup()
-
-
-if __name__ == "__main__":
+async def watchdog():
     while True:
-        main()
+        watch_for_triggers()
+
+
+async def start_watchdog():
+    asyncio.create_task(watchdog())

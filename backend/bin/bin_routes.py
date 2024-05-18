@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi import Depends
-from routes.auth import authorised_user
-from models.bin import BinMetaRequest, BinMetaResponse
+from auth.auth import authorised_user
+from bin.bin_models import BinMetaRequest, BinMetaResponse
 from models.base import ManyModel
 from db.driver import DbDriver
-import db.bin as db_bin
+import bin.bin_db as db_bin
 import uuid
 from uuid import UUID
 import shutil
@@ -25,7 +25,7 @@ async def get_binaries(
 async def create_upload_file(
     file: UploadFile,
     user_uid: UUID = Depends(authorised_user),
-    cur=Depends(DbDriver.db_cursor),
+    cur_conn=Depends(DbDriver.db_cursor),
 ):
 
     filename = uuid.uuid4()

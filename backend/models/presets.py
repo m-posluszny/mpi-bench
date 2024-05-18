@@ -3,8 +3,8 @@ from uuid import UUID
 
 
 class Preset(CustomBaseModel):
-    preset_id: UUID
-    owner_id: UUID
+    preset_uid: UUID
+    owner_uid: UUID
     description: str
 
 

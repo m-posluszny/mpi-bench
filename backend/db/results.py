@@ -1,7 +1,7 @@
 from models.bench import Result, BenchmarkRequest
 
 
-def create_result(data: BenchmarkRequest, user_id: int):
+def create_result(data: BenchmarkRequest, user_uid: int):
     return
 
 

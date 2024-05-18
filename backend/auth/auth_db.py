@@ -1,5 +1,5 @@
 from db.driver import cursor
-from models.user import UserDB
+from auth.auth_model import UserDB
 
 
 def get_db_user(cur: cursor, username: str):

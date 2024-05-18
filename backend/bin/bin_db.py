@@ -1,5 +1,5 @@
 from uuid import UUID
-from models.bin import BinMetaRequest, BinMetaResponse
+from bin.bin_models import BinMetaRequest, BinMeta
 from db.driver import cursor
 
 
@@ -12,21 +12,26 @@ def create(cur, uid: UUID, owner_uid: UUID, path: str):
 
 def get(cur: cursor, uid: UUID):
     cur.execute(
-        f"select {BinMetaResponse.fields_str()} from binaries where uid = %s",
+        f"select * from binaries where uid = %s",
         (str(uid),),
     )
-    row = cur.fetchone()
-    if row is None:
-        return None
-    return BinMetaResponse.from_list(row)
+    return BinMeta.convert_one(cur)
+
+
+def get_from_run(cur: cursor, run_uid: UUID):
+    cur.execute(
+        f"select * from binaries join runs on binaries.uid = runs.bin_uid where runs.uid = %s",
+        (str(run_uid),),
+    )
+    return BinMeta.convert_many(cur)
 
 
 def get_many(cur: cursor, owner_uid: UUID):
     cur.execute(
-        f"select {BinMetaResponse.fields_str()} from binaries where owner_uid = %s",
+        f"select * from binaries where owner_uid = %s",
         (str(owner_uid),),
     )
-    return [BinMetaResponse.from_list(row) for row in cur.fetchall()]
+    return BinMeta.convert_many(cur)
 
 
 def update_meta(cur: cursor, uid: UUID, meta: BinMetaRequest):
@@ -36,14 +41,6 @@ def update_meta(cur: cursor, uid: UUID, meta: BinMetaRequest):
         meta.to_list(),
     )
     return get(cur, uid)
-
-
-def get_path(cur: cursor, uid: UUID):
-    cur.execute(
-        "select path from binaries where bin_uid = %s",
-        (str(uid),),
-    )
-    return cur.fetchone()
 
 
 def delete(cur: cursor, uid: UUID, owner_uid):

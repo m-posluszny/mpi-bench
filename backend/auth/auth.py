@@ -2,9 +2,9 @@ from fastapi import HTTPException, Depends, APIRouter
 from fastapi_jwt_auth import AuthJWT
 from db.driver import DbDriver
 from config import Settings
-from db.user import create_user, get_db_user
 from uuid import UUID
-from models.user import User
+from auth.auth_db import create_user, get_db_user
+from auth.auth_model import User
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
