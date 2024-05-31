@@ -5,8 +5,8 @@ from psycopg2.extras import LoggingConnection
 import psycopg2.pool
 from psycopg2._psycopg import cursor
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 
 class DbDriver:
@@ -41,8 +41,11 @@ class DbDriver:
             cur.execute(sql)
 
     @classmethod
-    def db_session(cls):
+    def db_session(cls, echo=True):
         conn = cls.get().pool.getconn()
+        logger = logging.getLogger("psycopg2")
+        if not echo:
+            logger.setLevel(logging.INFO)
         conn.initialize(logger)
         try:
             with conn.cursor() as cur:
@@ -56,8 +59,8 @@ class DbDriver:
             cls.get().pool.putconn(conn)
 
     @classmethod
-    def db_cursor(cls):
-        for cur, conn in cls.db_session():
+    def db_cursor(cls, echo=True):
+        for cur, conn in cls.db_session(echo):
             yield cur
 
     def close_connection(self):

@@ -49,7 +49,7 @@ async def update_metadata(
     if not binary:
         raise HTTPException(status_code=404, detail="Not found")
     if user_uid != binary.owner_uid:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        raise HTTPException(status_code=403, detail="Unauthorized")
 
     return db_bin.update_meta(cur, uid, data)
 
@@ -64,6 +64,6 @@ async def delete_bin(
     if not binary:
         raise HTTPException(status_code=404, detail="Not found")
     if user_uid != binary.owner_uid:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        raise HTTPException(status_code=403, detail="Unauthorized")
     db_bin.delete(cur, uid, user_uid)
     return {"ok": True}

@@ -50,7 +50,7 @@ async def update_preset(
     existing_preset = cur.fetchone()
     if not existing_preset or existing_preset[0] != str(user_uid):
         raise HTTPException(
-            status_code=404 if not existing_preset else 401,
+            status_code=404 if not existing_preset else 403,
             detail="Not found or Unauthorized",
         )
 
@@ -78,7 +78,7 @@ async def delete_preset(
     preset = cur.fetchone()
     if not preset or preset[0] != str(user_uid):
         raise HTTPException(
-            status_code=404 if not preset else 401, detail="Not found or Unauthorized"
+            status_code=404 if not preset else 403, detail="Not found or Unauthorized"
         )
     sql_delete = "DELETE FROM presets WHERE preset_uid = %s;"
     cur.execute(sql_delete, (str(preset_uid),))

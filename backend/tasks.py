@@ -3,7 +3,7 @@ from time import time
 from uuid import UUID
 from psutil import Popen
 from worker import worker_app, db
-from runs.runs_model import ParametersRequest, Run, Status
+from runs.runs_model import Status
 from runs import runs_db
 from bin.bin_models import BinMeta
 from bin import bin_db

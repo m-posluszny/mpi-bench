@@ -110,3 +110,15 @@ EXCEPTION
    WHEN duplicate_object THEN
       NULL;
 END;$$;
+
+-- Trigger to handle run time updates on status change
+DO
+$$BEGIN
+CREATE TRIGGER delete_run_trigger
+BEFORE DELETE ON binaries
+FOR EACH ROW
+EXECUTE PROCEDURE notify_delete_bin();
+EXCEPTION
+   WHEN duplicate_object THEN
+      NULL;
+END;$$;

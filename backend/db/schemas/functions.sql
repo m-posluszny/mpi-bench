@@ -40,9 +40,9 @@ AS $$
 BEGIN 
     RETURN (SELECT status FROM runs WHERE runs.job_uid = job_uid
     order by case "status"
-            when 'PENDING' then 1
-            when 'RUNNING' then 2
-            when 'FAILED' then 3
+            when 'FAILED' then 1
+            when 'PENDING' then 2
+            when 'RUNNING' then 3
             when 'COMPLETE' then 4
          end, 
          updated_at desc LIMIT 1
@@ -58,6 +58,16 @@ AS $$
 BEGIN
     PERFORM pg_notify('new_run', NEW.uid::text);
     RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION notify_delete_bin()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    PERFORM pg_notify('delete_bin', NEW.OLD::text);
+    RETURN OLD;
 END;
 $$;
 

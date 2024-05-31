@@ -41,7 +41,7 @@ def login(user: User, Authorize: AuthJWT = Depends(), cur=Depends(DbDriver.db_cu
         db_user is not None
         and user.hash_password(user.password) != db_user.password_hash
     ):
-        raise HTTPException(status_code=401, detail="Bad username or password")
+        raise HTTPException(status_code=403, detail="Bad username or password")
 
     print(db_user.uid)
     print(str(db_user.uid))
