@@ -19,7 +19,7 @@ def receive_signal(signalNumber, frame):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    for cur, conn in db.db_session(echo=False):
+    for cur in db.db_cursor(echo=False):
         db.load_sql_file(cur, "./db/schemas/schema.sql")
         db.load_sql_file(cur, "./db/schemas/functions.sql")
         db.load_sql_file(cur, "./db/schemas/triggers.sql")

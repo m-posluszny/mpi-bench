@@ -20,7 +20,7 @@ export const BinaryView = ({ binary, isActive, onDelete, onSelect }) => {
 
     )
 }
-export const BinariesView = (activeUid, onSelect) => {
+export const BinariesView = ({ activeUid, onSelect, onCreate }) => {
     const binaries = [
         {
             uid: "1234567890",
@@ -52,7 +52,7 @@ export const BinariesView = (activeUid, onSelect) => {
 
     return (
         <Tiles>
-            <Header title="Binaries" btnTitle="Upload" btnclassName="bg-orange-500" />
+            <Header title="Binaries" btnTitle="Upload" btnClass="bg-orange-700" onClick={onCreate} />
             {
                 binaries.map((binary) => <BinaryView key={binary.uid} binary={binary} isActive={binary.uid === activeUid} onSelect={onSelect} />)
             }

@@ -20,7 +20,7 @@ export const JobView = ({ job, isActive, onDelete, onSelect }) => {
 
     )
 }
-export const JobsView = (activeUid, onSelect) => {
+export const JobsView = ({ activeUid, onSelect, onCompare = () => { } }) => {
     const jobs = [
         {
             uid: "1234567890",
@@ -52,7 +52,7 @@ export const JobsView = (activeUid, onSelect) => {
 
     return (
         <Tiles>
-            <Header title="Jobs" btnTitle={"Compare"} />
+            <Header title="Jobs" btnTitle={"Compare"} onClick={onCompare} />
             {
                 jobs.map((job) => <JobView key={job.uid} job={job} isActive={job.uid === activeUid} onSelect={onSelect} />)
             }

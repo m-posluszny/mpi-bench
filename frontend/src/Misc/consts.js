@@ -10,5 +10,5 @@ export const MultiViewEnum = {
     PRESET_VIEW: "Preset",
     JOB_VIEW: "Job",
     RUN_VIEW: "Run",
-    JOB_COMPAR: "Comparison",
+    JOB_COMPARE: "Comparison",
 };

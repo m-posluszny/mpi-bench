@@ -20,7 +20,7 @@ export const RunView = ({ run, isActive, onDelete, onSelect }) => {
 
     )
 }
-export const RunsView = (activeUid, onSelect) => {
+export const RunsView = ({ activeUid, onSelect }) => {
     const runs = [
         {
             uid: "1234567890",

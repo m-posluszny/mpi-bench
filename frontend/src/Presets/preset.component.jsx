@@ -20,7 +20,7 @@ export const PresetView = ({ preset, isActive, onDelete, onSelect }) => {
 
     )
 }
-export const PresetsView = (activeUid, onSelect) => {
+export const PresetsView = ({ activeUid, onSelect, onCreate = () => { } }) => {
     const presets = [
         {
             uid: "1234567890",
@@ -52,7 +52,7 @@ export const PresetsView = (activeUid, onSelect) => {
 
     return (
         <Tiles>
-            <Header title="Presets" btnTitle="Create" btnclassName="bg-lime-500" />
+            <Header title="Presets" btnTitle="Create" btnClass="bg-lime-500" onClick={onCreate} />
             {
                 presets.map((preset) => <PresetView key={preset.uid} preset={preset} isActive={preset.uid === activeUid} onSelect={onSelect} />)
             }
