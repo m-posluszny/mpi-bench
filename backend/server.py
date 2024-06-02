@@ -33,7 +33,11 @@ app = FastAPI(lifespan=lifespan, docs_url="/api/docs", redoc_url="/api/redoc")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,4 +52,4 @@ app.include_router(router)
 
 @app.exception_handler(AuthJWTException)
 def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.message})  # type: ignore
+    return JSONResponse(status_code=401, content={"detail": f"jwt: {exc.message}"})  # type: ignore

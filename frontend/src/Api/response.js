@@ -3,6 +3,7 @@
   }
   
   export function handleError(error) {
+    console.log(error.response)
     if (error.response?.data) {
       let detail = error.response.data.detail
         ? error.response.data.detail

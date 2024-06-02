@@ -36,9 +36,10 @@ def get_many(cur: cursor, owner_uid: UUID):
 
 def update_meta(cur: cursor, uid: UUID, meta: BinMetaRequest):
     fields = BinMetaRequest.fields_set()
+    print(fields, meta.to_list())
     cur.execute(
         f"update binaries set {fields} where uid = %s",
-        meta.to_list(),
+        (*meta.to_list(), str(uid)),
     )
     return get(cur, uid)
 

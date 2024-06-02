@@ -49,8 +49,8 @@ class CustomBaseModel(BaseModel):
 
     @classmethod
     def convert_many(cls, cursor):
-        row = cursor.fetchall()
-        return cls.row_factory(cursor)(row)
+        rows = cursor.fetchall()
+        return [cls.row_factory(cursor)(row) for row in rows]
 
 
 Model = TypeVar("Model", bound=BaseModel)

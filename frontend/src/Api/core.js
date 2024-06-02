@@ -7,29 +7,6 @@ const axiosInstance = axios.create({
   baseURL: BACKEND_URL,
 });
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const originalRequest = error.config;
-
-    if (error?.response?.status === 401 && !originalRequest._retry && originalRequest.withCredentials) {
-      originalRequest._retry = true;
-
-      return axios.post(`${BACKEND_URL}/api/refresh`, {}, { withCredentials: true })
-        .then(() => {
-          // Retry the original request with refreshed cookies
-          return axiosInstance(originalRequest);
-        })
-        .catch((refreshError) => {
-          // Handle refresh token failure
-          return Promise.reject(refreshError);
-        });
-    }
-
-    return Promise.reject(error);
-  }
-);
-
 export const fetcher = ([path, data = {}]) => get(path, data);
 
 export const getFileData = (file) => {

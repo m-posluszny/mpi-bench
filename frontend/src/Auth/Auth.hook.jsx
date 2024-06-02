@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "../Misc/LocalStorage.hook";
 import { useState } from "react";
-import { post, remove } from "../Api/core";
+import { post, get } from "../Api/core";
 import axios from "axios";
 const AuthContext = createContext();
 
@@ -41,7 +41,8 @@ export const AuthProvider = ({ children }) => {
         try {
             return args === undefined ? await request() : await request(...args);
         } catch (error) {
-            if (error.message === "Unauthorized") {
+            console.log(error)
+            if (error.detail === "Unauthorized" || error.status === 401) {
                 logout();
             }
             throw error;
@@ -57,12 +58,15 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
+    const authFetcher = ([path, data = {}]) => withAuth(get, path, data);
+
     const value = useMemo(
         () => ({
             login,
             register,
             logout,
             withAuth,
+            authFetcher,
             user,
             isLoggedIn,
             isLoading,

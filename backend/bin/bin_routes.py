@@ -25,7 +25,7 @@ async def get_binaries(
 async def create_upload_file(
     file: UploadFile,
     user_uid: UUID = Depends(authorised_user),
-    cur_conn=Depends(DbDriver.db_cursor),
+    cur=Depends(DbDriver.db_cursor),
 ):
 
     filename = uuid.uuid4()

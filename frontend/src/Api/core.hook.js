@@ -5,11 +5,12 @@ export const useCore = (
   url,
   query,
   shouldRun = true,
-  options = {}
+  options = {},
+  _fetcher = fetcher
 ) => {
   const { data, error, mutate, isLoading } = useSWR(
     shouldRun && url ? [url, query] : null,
-    fetcher,
+    _fetcher,
     options
   );
   return { data, refresh: mutate, error, loading: isLoading };

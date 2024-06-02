@@ -27,9 +27,13 @@ export const Header = ({ title, btnTitle, btnClass, className = "", onClick = ()
             btnTitle &&
             <button className={`ml-auto 
           p-1 rounded-xl bg-gray-500 text-xs font-bold px-2 ${btnClass} hover:bg-slate-300`} onClick={() => onClick()}>{btnTitle}</button>
-
         }
-
     </div >
 
 }
+
+export const FormRow = ({ children }) => (
+    <div className="my-3 p-auto flex">
+        {children}
+    </div>
+)
