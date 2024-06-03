@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "../Misc/LocalStorage.hook";
 import { useState } from "react";
-import { post, get } from "../Api/core";
+import { post, get, BACKEND_URL } from "../Api/core";
 import axios from "axios";
 const AuthContext = createContext();
 
@@ -38,21 +38,31 @@ export const AuthProvider = ({ children }) => {
     };
 
     const withAuth = async (request, ...args) => {
+        const fn = async () => args === undefined ? await request() : await request(...args);
+        const auth_failed = (e) => e.detail === "Unauthorized" || e.status === 401
         try {
-            return args === undefined ? await request() : await request(...args);
+            console.log("log")
+            return await fn()
         } catch (error) {
             console.log(error)
-            if (error.detail === "Unauthorized" || error.status === 401) {
-                logout();
-            }
-            throw error;
+            if (auth_failed(error)) {
+                return axios.post(`${BACKEND_URL}/api/auth/refresh`, {}, { withCredentials: true }).then((response) => {
+                    console.log("refresh ok")
+                    return fn();
+                }).catch((e) => {
+                    if (auth_failed(e)) {
+                        logout();
+                    }
+                    throw error;
+                });
+            } throw error;
         }
     };
 
     const logout = () => {
         setIsLoading(true);
         setUser(null);
-        axios.delete("/api/auth/logout", {}, { withCredentials: true }).catch(() => { }).finally(() => {
+        axios.delete(`${BACKEND_URL}/api/auth/logout`, {}, { withCredentials: true }).catch(() => { }).finally(() => {
             setIsLoading(false)
             navigate("/login", { replace: true });
         });

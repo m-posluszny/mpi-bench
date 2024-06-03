@@ -39,6 +39,9 @@ export const BinaryCreateView = () => {
 
     return (
         <form className="bg-slate-600 rounded-xl px-10 py-2 h-fit" onSubmit={handleFormSubmit}>
+            <div className="text-white font-bold my-3">
+                Upload binary
+            </div>
             <div class="border border-dashed rounded-xl bg-slate-500 relative">
                 <input type="file" name="file" id="file" required className="cursor-pointer file:hidden relative block  w-full h-full text-center py-4 z-50"></input>
             </div>

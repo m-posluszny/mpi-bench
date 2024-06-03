@@ -9,7 +9,7 @@ export const useBinaries = () => {
     const { withAuth, authFetcher } = useAuth();
     const { data, refresh, loading} = useCore(URL_BINARIES(),null, true, {}, authFetcher);
 
-    const deleteBin = (uid)=>remove(URL_BINARIES(uid))
+    const deleteBin = (uid)=>remove(URL_BINARIES(uid)).finally(refresh)
 
     const createBin = (fileForm, metadata)=>withAuth(post, URL_BINARIES(),
             fileForm

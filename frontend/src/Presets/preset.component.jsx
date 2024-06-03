@@ -1,4 +1,5 @@
 import { Tile, Tiles, Header } from "../Misc/UI.component"
+import { usePresets } from "./preset.hook"
 
 export const PresetView = ({ preset, isActive, onDelete, onSelect }) => {
     return (
@@ -21,34 +22,7 @@ export const PresetView = ({ preset, isActive, onDelete, onSelect }) => {
     )
 }
 export const PresetsView = ({ activeUid, onSelect, onCreate = () => { } }) => {
-    const presets = [
-        {
-            uid: "1234567890",
-            name: "test",
-            branch: "main",
-            created: "2022-01-01",
-            tag: "v1.0.0",
-            commit_uid: "1234567890"
-        },
-        {
-            uid: "1234567890",
-            name: "test",
-            branch: "main",
-            created: "2022-01-01",
-            tag: "v1.0.0",
-            commit_uid: "1234567890"
-        },
-        {
-            uid: "1234567890",
-            name: "test",
-            branch: "main",
-            created: "2022-01-01",
-            tag: "v1.0.0",
-            commit_uid: "1234567890"
-        },
-    ]
-
-
+    const { presets } = usePresets()
 
     return (
         <Tiles>

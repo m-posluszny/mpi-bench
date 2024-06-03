@@ -1,5 +1,6 @@
 import { BinaryCreateView } from "../ Bin/binCreate.component"
 import { MultiViewEnum } from "../Misc/consts"
+import { PresetCreateView } from "../Presets/presetCreate.component"
 
 export const MultiPanel = ({ view, data }) => {
     console.log(view)
@@ -7,7 +8,7 @@ export const MultiPanel = ({ view, data }) => {
         case MultiViewEnum.BINARY_CREATE:
             return <BinaryCreateView />
         case MultiViewEnum.PRESET_CREATE:
-            return <BinaryCreateView />
+            return <PresetCreateView />
         case MultiViewEnum.PRESET_VIEW:
             return <div>Preset view</div>
         case MultiViewEnum.JOB_VIEW:

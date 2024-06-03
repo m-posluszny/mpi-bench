@@ -10,19 +10,34 @@ import { useState } from 'react';
 
 export const MainView = () => {
   const [view, setView] = useState(MultiViewEnum.NONE);
+  const [viewParams, setViewParams] = useState(null);
+
+  const [selectedBinary, setSelectedBinary] = useState(null);
+
+  const selectBin = (uid) => {
+    if (selectedBinary === uid) {
+      setSelectedBinary(null);
+    } else {
+      setSelectedBinary(uid);
+    }
+  }
+
 
   return (
     <div className=''>
       <NavbarView />
       <main className="mx-1 flex my-auto flex-row  overflow-y-visible overflow-x-hidden">
         <div className="mx-1 flex my-auto flex-row  overflow-y-visible overflow-x-hidden h-[100vh]">
-          <BinariesView onCreate={() => { setView(MultiViewEnum.BINARY_CREATE); console.log("v") }} />
+          <BinariesView onCreate={() => { setView(MultiViewEnum.BINARY_CREATE); console.log("v") }}
+            onSelect={selectBin}
+            activeUid={selectedBinary}
+          />
           <PresetsView onCreate={() => setView(MultiViewEnum.PRESET_CREATE)} />
           <JobsView onCompare={() => setView(MultiViewEnum.JOB_COMPARE)} />
           <RunsView />
         </div>
         <div className='w-50 flex ml-5'>
-          <MultiPanel view={view} />
+          <MultiPanel view={view} data={viewParams} />
         </div>
       </main>
       <Footer />

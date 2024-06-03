@@ -4,11 +4,14 @@ import { FaDeleteLeft } from "react-icons/fa6";
 
 export const BinaryView = ({ binary, isActive, onDelete, onSelect }) => {
 
-    const deleteProcedure = () => window.confirm(`Do you really want to delete ${binary.name}?`) && onDelete(binary.uid).then(() => onSelect(null)).then(() => window.alert("Deleted")).catch(() => alert("Error, cannot delete"))
+    const deleteProcedure = () => window.confirm(`Do you really want to delete ${binary.name}?`) && onDelete(binary.uid).then(() => {
+        window.alert("Deleted")
+        onSelect(null)
+    }).catch(() => alert("Error, cannot delete"))
 
 
     return (
-        <Tile isActive={isActive} onSelect={() => onSelect(binary)}>
+        <Tile isActive={isActive} onClick={() => onSelect(binary.uid)}>
             <div>
                 <div className="flex">
                     <h2 className="font-bold">

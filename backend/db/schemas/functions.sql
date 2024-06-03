@@ -66,7 +66,7 @@ RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    PERFORM pg_notify('delete_bin', NEW.OLD::text);
+    PERFORM pg_notify('delete_bin', OLD.path::text);
     RETURN OLD;
 END;
 $$;

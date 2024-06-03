@@ -2,11 +2,11 @@ import { defaultActiveColor } from "./consts"
 
 export const Tile = ({ children, isActive = false, activeColor = defaultActiveColor, onClick }) => {
 
-    const activeStyle = isActive ? `${activeColor}` : ""
-    const hoverStyle = onClick ? "hover:bg-slate-700" : ""
+    const activeStyle = isActive ? `border ${activeColor}` : ""
+    const hoverStyle = onClick ? "hover:bg-slate-400" : ""
     return <div
         onClick={onClick ? onClick : () => { }}
-        className={`flex bg-slate-500 rounded-xl p-3 my-1 ${activeStyle} ${hoverStyle}`}>
+        className={`flex bg-slate-500 rounded-xl p-3 my-1 ${activeStyle} ${hoverStyle} `}>
         {children}
     </div>
 }
@@ -34,6 +34,12 @@ export const Header = ({ title, btnTitle, btnClass, className = "", onClick = ()
 
 export const FormRow = ({ children }) => (
     <div className="my-3 p-auto flex">
+        {children}
+    </div>
+)
+
+export const FormGroup = ({ children }) => (
+    <div className="my-3 p-auto ms-6 bg-slate-600">
         {children}
     </div>
 )

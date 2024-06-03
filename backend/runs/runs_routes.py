@@ -1,5 +1,5 @@
 from fastapi import Depends, APIRouter, HTTPException
-from typing import List
+from models.base import ManyModel
 from runs.runs_model import Run, RunRequest
 from db.driver import DbDriver
 from auth.auth import authorised_user
@@ -10,11 +10,11 @@ from runs import runs_db
 router = APIRouter(prefix="/runs", tags=["runs"])
 
 
-@router.get("/", response_model=List[Run])
+@router.get("/", response_model=ManyModel[Run])
 async def get_runs(
     user_uid: UUID = Depends(authorised_user), cur=Depends(DbDriver.db_cursor)
 ):
-    return runs_db.get_all(cur, user_uid)
+    return {"items": runs_db.get_all(cur, user_uid)}
 
 
 @router.get("/{run_uid}", response_model=Run)
