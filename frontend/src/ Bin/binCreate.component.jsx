@@ -1,4 +1,4 @@
-import { FormRow } from "../Misc/UI.component";
+import { FormRow, PanelClass } from "../Misc/UI.component";
 import { useBinaries } from "./bin.hook";
 
 export const BinaryCreateView = () => {
@@ -38,7 +38,8 @@ export const BinaryCreateView = () => {
     const labelClass = "text-white mr-4";
 
     return (
-        <form className="bg-slate-600 rounded-xl px-10 py-2 h-fit" onSubmit={handleFormSubmit}>
+        <form className={PanelClass}
+            onSubmit={handleFormSubmit}>
             <div className="text-white font-bold my-3">
                 Upload binary
             </div>

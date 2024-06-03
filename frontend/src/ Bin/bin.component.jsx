@@ -3,16 +3,18 @@ import { useBinaries } from "./bin.hook"
 import { FaDeleteLeft } from "react-icons/fa6";
 
 export const BinaryView = ({ binary, isActive, onDelete, onSelect }) => {
+    const { refresh } = useBinaries()
 
     const deleteProcedure = () => window.confirm(`Do you really want to delete ${binary.name}?`) && onDelete(binary.uid).then(() => {
         window.alert("Deleted")
         onSelect(null)
+        refresh()
     }).catch(() => alert("Error, cannot delete"))
 
 
     return (
         <Tile isActive={isActive} onClick={() => onSelect(binary.uid)}>
-            <div>
+            <div className="mx-auto w-100">
                 <div className="flex">
                     <h2 className="font-bold">
                         {binary?.name}
@@ -28,7 +30,6 @@ export const BinaryView = ({ binary, isActive, onDelete, onSelect }) => {
                 </div>
             </div>
         </Tile>
-
     )
 }
 export const BinariesView = ({ activeUid, onSelect, onCreate }) => {

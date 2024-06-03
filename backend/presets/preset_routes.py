@@ -17,23 +17,13 @@ async def get_presets(
     return {"items": preset_db.get_all(cur, user_uid)}
 
 
-@router.get("/{uid}/jobs", response_model=PresetJob)
-async def get_preset(
-    uid: UUID,
-    user_uid: UUID = Depends(authorised_user),
-    cur=Depends(DbDriver.db_cursor),
-):
-    return job_db.get_all(cur, user_uid)
-
-
-@router.post("/{uid}/jobs", response_model=PresetJob)
+@router.get("/{uid}/jobs", response_model=ManyModel[PresetJob])
 async def get_jobs(
     uid: UUID,
-    job: PresetJobRequest,
     user_uid: UUID = Depends(authorised_user),
     cur=Depends(DbDriver.db_cursor),
 ):
-    return job_db.create(cur, job, user_uid)
+    return {"items": job_db.get_all(cur, user_uid)}
 
 
 @router.post("/{uid}/jobs", response_model=PresetJob)

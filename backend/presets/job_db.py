@@ -14,10 +14,10 @@ def create(cur: cursor, r: PresetJobRequest, owner_uid: UUID):
     return get(cur, uid, owner_uid)
 
 
-def get_all(cur: cursor, owner_uid: UUID) -> List[PresetJob]:
+def get_all(cur: cursor, preset_uid: UUID) -> List[PresetJob]:
     cur.execute(
-        f"select * from job_view where owner_uid = %s",
-        (str(owner_uid),),
+        f"select * from job_view where preset_uid = %s",
+        (str(preset_uid),),
     )
     return PresetJob.convert_many(cur)
 
@@ -25,9 +25,6 @@ def get_all(cur: cursor, owner_uid: UUID) -> List[PresetJob]:
 def get(cur: cursor, uid: UUID, user_uid: Optional[UUID] = None) -> PresetJob:
     q = f"select * from job_view where uid = %s"
     ps = [str(uid)]
-    if user_uid:
-        q += " and owner_uid = %s"
-        ps.append(str(user_uid))
     cur.execute(q, ps)
     return PresetJob.convert_one(cur)
 
