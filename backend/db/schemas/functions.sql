@@ -33,19 +33,19 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION job_status_check(job_uid UUID)
+CREATE OR REPLACE FUNCTION job_status_check(i_job_uid UUID)
 RETURNS TEXT
 LANGUAGE plpgsql
 AS $$
 BEGIN 
-    RETURN (SELECT status FROM runs WHERE runs.job_uid = job_uid
+    RETURN (SELECT status FROM runs as r WHERE r.job_uid = i_job_uid
     order by case "status"
             when 'FAILED' then 1
             when 'PENDING' then 2
             when 'RUNNING' then 3
-            when 'COMPLETE' then 4
+            when 'FINISHED' then 4
          end, 
-         updated_at desc LIMIT 1
+         created desc LIMIT 1
 
     );
 END;
@@ -81,40 +81,36 @@ CREATE OR REPLACE PROCEDURE create_run(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    INSERT INTO runs (binary_uid, owner_uid, param_uid, status)
-    VALUES (bin_uid, owner_uid, param_uid, 'PENDING')
+    INSERT INTO runs (binary_uid, owner_uid, job_uid, param_uid ,status)
+    VALUES (bin_uid, owner_uid, job_uid, param_uid, 'PENDING')
     RETURNING uid INTO run_uid;
 END;
 $$;
 
 
 CREATE OR REPLACE PROCEDURE begin_job(
-    IN preset_uid UUID, 
-    IN bin_uid UUID,
+    IN i_preset_uid UUID, 
+    IN i_bin_uid UUID,
     OUT job_uid UUID)
 LANGUAGE plpgsql
 AS $$
 DECLARE
     param RECORD;
-    owner_uid UUID;
+    i_owner_uid UUID;
+    buff UUID;
 BEGIN
-    BEGIN
-        INSERT INTO jobs (preset_uid, binary_uid) VALUES (preset_uid, bin_uid) RETURNING uid INTO job_uid;
+        SELECT p.owner_uid INTO i_owner_uid FROM presets as p WHERE p.uid = i_preset_uid;
 
-        SELECT owner_uid INTO owner_uid FROM presets WHERE uid = preset_uid;
+        INSERT INTO preset_jobs (preset_uid, binary_uid, owner_uid) VALUES (i_preset_uid, i_bin_uid, i_owner_uid) RETURNING uid INTO job_uid;
 
         FOR param IN 
             SELECT uid FROM parameters as p
-            WHERE p.preset_uid = preset_uid
+            WHERE p.preset_uid = i_preset_uid
         LOOP
-            CALL create_run(bin_uid, owner_uid, param.parameter_uid, job_uid);
+            CALL create_run(i_bin_uid, i_owner_uid, param.uid, job_uid, buff);
         END LOOP;
-        
-        COMMIT;
-    EXCEPTION
-        WHEN OTHERS THEN
-            ROLLBACK;
-            RAISE;
-    END;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
 END;
 $$;

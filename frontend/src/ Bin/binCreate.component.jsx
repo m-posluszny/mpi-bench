@@ -3,7 +3,7 @@ import { useBinaries } from "./bin.hook";
 
 export const BinaryCreateView = () => {
 
-    const { createBin } = useBinaries();
+    const { createBin, refresh } = useBinaries();
 
 
     const handleFormSubmit = (event) => {
@@ -26,6 +26,7 @@ export const BinaryCreateView = () => {
         return createBin(formData, { name, tag, branch, commit_uid })
             .then(data => {
                 alert('File and metadata uploaded successfully');
+                refresh()
                 form.reset()
             })
             .catch(error => {

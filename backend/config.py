@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 BIN_UPLOAD_DIR = "./storage/binaries"
+RUN_DIR = "./storage/runs"
 
 DATABASE_CONFIG = {
     "user": "postgres",

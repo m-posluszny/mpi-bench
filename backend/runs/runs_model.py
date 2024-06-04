@@ -1,9 +1,11 @@
 from datetime import datetime
+from token import OP
+
 from models.base import CustomBaseModel
 from typing import Optional
 from uuid import UUID
 from enum import Enum
-import json
+import config
 
 
 class Status(str, Enum):
@@ -25,26 +27,27 @@ class RunRequest(CustomBaseModel):
 
 class Run(RunRequest):
     uid: UUID
-    owner_uid: UUID
-    status: str
-    start_time: datetime
-    end_time: datetime
-    duration: float
-    created: float
-    # log_path: str
-    # metrics: dict
+    status: Status
+    created: datetime
+    start_time: Optional[datetime]
+    end_time: Optional[datetime]
+    duration: Optional[float]
+    metrics: Optional[dict]
+
+    @property
+    def workspace(self):
+        return f"{config.RUN_DIR}/{self.uid}"
 
     @classmethod
     def _from_row(cls, row):
-        param = json.loads(row["param_json"])
         return cls(
             uid=row["uid"],
-            owner_uid=row["owner_uid"],
             binary_uid=row["binary_uid"],
             status=row["status"],
             duration=row["duration"],
             created=row["created"],
+            metrics=row["metrics"],
             start_time=row["start_time"],
             end_time=row["end_time"],
-            parameters=ParametersRequest(**param),
+            parameters=ParametersRequest(**row["param_json"]),
         )

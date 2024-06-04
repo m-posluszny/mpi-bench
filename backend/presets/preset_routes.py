@@ -31,9 +31,9 @@ async def start_job(
     uid: UUID,
     job: PresetJobRequest,
     user_uid: UUID = Depends(authorised_user),
-    cur=Depends(DbDriver.db_cursor),
+    session=Depends(DbDriver.db_session),
 ):
-    return job_db.create(cur, job, user_uid)
+    return job_db.create(session, job, user_uid)
 
 
 @router.post("/", response_model=Preset)

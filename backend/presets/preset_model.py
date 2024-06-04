@@ -1,16 +1,9 @@
 from datetime import datetime
 from models.base import CustomBaseModel
-from runs.runs_model import ParametersRequest, Run
+from runs.runs_model import ParametersRequest, Run, Status
 from typing import List
 from uuid import UUID
 from enum import Enum
-
-
-class Status(str, Enum):
-    PENDING = "PENDING"
-    RUNNING = "RUNNING"
-    FINISHED = "FINISHED"
-    FAILED = "FAILED"
 
 
 class PresetRequest(CustomBaseModel):
@@ -44,4 +37,16 @@ class PresetJobRequest(CustomBaseModel):
 class PresetJob(PresetJobRequest):
     uid: UUID
     runs: List[Run]
-    created: float
+    status: Status
+    created: datetime
+
+    @classmethod
+    def _from_row(cls, row):
+        return cls(
+            uid=row["uid"],
+            preset_uid=row["preset_uid"],
+            binary_uid=row["binary_uid"],
+            runs=[Run._from_row(r) for r in row["runs_json"]],
+            status=row["job_status"],
+            created=row["created"],
+        )

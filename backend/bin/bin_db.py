@@ -20,10 +20,10 @@ def get(cur: cursor, uid: UUID):
 
 def get_from_run(cur: cursor, run_uid: UUID):
     cur.execute(
-        f"select * from binaries join runs on binaries.uid = runs.bin_uid where runs.uid = %s",
+        f"select b.*  from binaries as b join runs as r on b.uid = r.binary_uid where r.uid = %s",
         (str(run_uid),),
     )
-    return BinMeta.convert_many(cur)
+    return BinMeta.convert_one(cur)
 
 
 def get_many(cur: cursor, owner_uid: UUID):

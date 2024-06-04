@@ -1,0 +1,8 @@
+{
+"grains": 200,
+"density": 3000,
+"radius": 20.000,
+"iterations": 4,
+"time": 1.595,
+"world_size": 2
+}

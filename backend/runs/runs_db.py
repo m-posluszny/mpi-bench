@@ -3,12 +3,13 @@ from typing import List, Optional
 from fastapi import HTTPException
 from db.driver import cursor
 from runs.runs_model import RunRequest, Run, Status
+import json
 
 
-def update(cur, run_uid: UUID, status: Status, duration: float):
+def update(cur, run_uid: UUID, status: Status, duration: float, metrics: dict = {}):
     cur.execute(
-        "update runs set status = %s, duration = %s where run_uid = %s",
-        (status, duration, str(run_uid)),
+        "update runs set status = %s, duration = %s, metrics = %s where runs.uid = %s",
+        (status, duration, json.dumps(metrics), str(run_uid)),
     )
 
 

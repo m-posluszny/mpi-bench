@@ -1,15 +1,22 @@
 from uuid import UUID
 from typing import List, Optional
 from fastapi import HTTPException
-from db.driver import cursor
+from db.driver import cursor, LoggingConnection
 from presets.preset_model import PresetJobRequest, PresetJob
 
 
-def create(cur: cursor, r: PresetJobRequest, owner_uid: UUID):
-    cur.execute("call begin_job(%s, %s)", (str(r.preset_uid), str(r.binary_uid)))
+def create(
+    session: tuple[cursor, LoggingConnection], r: PresetJobRequest, owner_uid: UUID
+):
+    cur, conn = session
+    cur.execute(
+        "call begin_job(%s, %s, %s);", (str(r.preset_uid), str(r.binary_uid), None)
+    )
     row = cur.fetchone()
+    print(row)
     if not row:
         raise Exception("this should not happen")
+    conn.commit()
     uid = UUID(row[0])
     return get(cur, uid, owner_uid)
 

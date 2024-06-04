@@ -4,12 +4,13 @@ from auth.auth import authorised_user
 from bin.bin_models import BinMetaRequest, BinMetaResponse
 from models.base import ManyModel
 from db.driver import DbDriver
+from uuid import UUID
 import bin.bin_db as db_bin
 import uuid
-from uuid import UUID
 import shutil
 import config
 import os
+import stat
 
 router = APIRouter(prefix="/binaries", tags=["binaries"])
 
@@ -34,6 +35,8 @@ async def create_upload_file(
 
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
+    st = os.stat(file_path)
+    os.chmod(file_path, st.st_mode | stat.S_IEXEC)
     db_bin.create(cur, filename, user_uid, file_path)
     return {"uid": filename}
 

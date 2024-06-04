@@ -24,7 +24,7 @@ END;$$;
 -- Triggers for binaries and users table
 DO
 $$BEGIN
-CREATE TRIGGER preset_created_trigger
+CREATE TRIGGER preset_jobs_created_trigger
 BEFORE INSERT ON preset_jobs
 FOR EACH ROW EXECUTE PROCEDURE set_created_function();
 EXCEPTION
@@ -35,9 +35,9 @@ END;$$;
 -- Trigger for runs table
 DO
 $$BEGIN
-CREATE TRIGGER run_start_trigger
+CREATE TRIGGER run_create_trigger
 BEFORE INSERT ON runs
-FOR EACH ROW EXECUTE PROCEDURE set_start_time_function();
+FOR EACH ROW EXECUTE PROCEDURE set_created_function();
 EXCEPTION
    WHEN duplicate_object THEN
       NULL;
@@ -83,17 +83,6 @@ $$BEGIN
 CREATE TRIGGER preset_created_trigger
 BEFORE INSERT ON preset_jobs
 FOR EACH ROW EXECUTE PROCEDURE set_created_function();
-EXCEPTION
-   WHEN duplicate_object THEN
-      NULL;
-END;$$;
-
--- Trigger for runs table
-DO
-$$BEGIN
-CREATE TRIGGER run_start_trigger
-BEFORE INSERT ON runs
-FOR EACH ROW EXECUTE PROCEDURE set_start_time_function();
 EXCEPTION
    WHEN duplicate_object THEN
       NULL;

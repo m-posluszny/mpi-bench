@@ -40,6 +40,7 @@ SELECT
     binary_uid,
     r.created,
     r.owner_uid,
+    r.job_uid,
     status,
     duration,
     start_time,
@@ -47,10 +48,38 @@ SELECT
     log_path,
     result_data,
     metrics,
+    pj.uid as param_uid,
     pj.data as param_json
 FROM
     runs as r
     JOIN parameters_json as pj ON r.param_uid = pj.uid;
+
+CREATE
+OR REPLACE VIEW runs_json_view AS
+SELECT
+    job_uid,
+    json_build_object (
+        'uid',
+        uid,
+        'binary_uid',
+        binary_uid,
+        'status',
+        status,
+        'created',
+        created,
+        'start_time',
+        start_time,
+        'end_time',
+        end_time,
+        'duration',
+        duration,
+        'metrics',
+        metrics,
+        'param_json',
+        param_json
+    ) as data
+FROM
+    runs_view;
 
 CREATE
 OR REPLACE VIEW presets_view AS
@@ -74,10 +103,10 @@ SELECT
     j.created,
     j.binary_uid,
     j.preset_uid,
-    json_agg (rj.param_json) as runs_json,
+    json_agg (rj.data) as runs_json,
     job_status_check (j.uid) AS job_status
 FROM
     preset_jobs as j
-    JOIN runs_view as rj ON j.uid = rj.binary_uid
+    JOIN runs_json_view as rj ON j.uid = rj.job_uid
 GROUP BY
     j.uid
