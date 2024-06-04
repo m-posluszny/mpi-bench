@@ -58,6 +58,7 @@ CREATE
 OR REPLACE VIEW runs_json_view AS
 SELECT
     job_uid,
+    duration,
     json_build_object (
         'uid',
         uid,
@@ -103,6 +104,7 @@ SELECT
     j.created,
     j.binary_uid,
     j.preset_uid,
+    SUM(duration) as duration,
     json_agg (rj.data) as runs_json,
     job_status_check (j.uid) AS job_status
 FROM

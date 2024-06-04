@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }) => {
         const fn = async () => args === undefined ? await request() : await request(...args);
         const auth_failed = (e) => e.detail === "Unauthorized" || e.status === 401
         try {
-            console.log("log")
             return await fn()
         } catch (error) {
             console.log(error)

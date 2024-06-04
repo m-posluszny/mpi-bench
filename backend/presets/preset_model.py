@@ -1,9 +1,8 @@
 from datetime import datetime
 from models.base import CustomBaseModel
 from runs.runs_model import ParametersRequest, Run, Status
-from typing import List
+from typing import List, Optional
 from uuid import UUID
-from enum import Enum
 
 
 class PresetRequest(CustomBaseModel):
@@ -39,6 +38,7 @@ class PresetJob(PresetJobRequest):
     runs: List[Run]
     status: Status
     created: datetime
+    duration: Optional[float]
 
     @classmethod
     def _from_row(cls, row):
@@ -49,4 +49,5 @@ class PresetJob(PresetJobRequest):
             runs=[Run._from_row(r) for r in row["runs_json"]],
             status=row["job_status"],
             created=row["created"],
+            duration=row["duration"],
         )

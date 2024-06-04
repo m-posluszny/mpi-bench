@@ -1,10 +1,12 @@
 import json
 import glob
 import os
+import config
 from pathlib import Path
 from time import time
 from uuid import UUID
 from subprocess import Popen
+import subprocess
 from worker import worker_app, db
 from runs.runs_model import Status
 from runs import runs_db
@@ -19,6 +21,9 @@ def start_process(binary: BinMeta, n_proc, flags: dict, workdir: str):
     return Popen(
         ["mpirun", "-n", str(n_proc), path, *[x for flag in flag_flat for x in flag]],
         cwd=workdir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
     )
 
 
@@ -39,6 +44,8 @@ def run_benchmark(run_uid: UUID):
         bin = bin_db.get_from_run(cur, run_uid)
         params = run.parameters
     os.makedirs(run.workspace)
+    log_file = f"{run.workspace}/{config.LOG_NAME}"
+
     if not bin:
         for cur in db.db_cursor():
             runs_db.update(cur, run_uid, Status.FAILED, 0)
@@ -46,13 +53,17 @@ def run_benchmark(run_uid: UUID):
 
     t0 = time()
     p = start_process(bin, params.n_proc, params.flags, run.workspace)
-    while p.poll() is None:
-        ...
-    t1 = time() - t0
-    metrics = generate_metrics(run.workspace)
-    if p.poll() != 0:
+    with open(log_file, "w") as f:
+        while p.poll() is None:
+            output = p.stdout.read()  # type: ignore
+            if output:
+                f.write(output)
+                f.flush()
+        t1 = time() - t0
+        metrics = generate_metrics(run.workspace)
+        if p.poll() != 0:
+            for cur in db.db_cursor():
+                runs_db.update(cur, run_uid, Status.FAILED, t1, metrics)
+            print("SIM FAILED")
         for cur in db.db_cursor():
-            runs_db.update(cur, run_uid, Status.FAILED, 0, metrics)
-        print("SIM FAILED")
-    for cur in db.db_cursor():
-        runs_db.update(cur, run_uid, Status.FINISHED, 0, metrics)
+            runs_db.update(cur, run_uid, Status.FINISHED, t1, metrics)

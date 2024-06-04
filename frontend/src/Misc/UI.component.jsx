@@ -1,6 +1,6 @@
 import { defaultActiveColor } from "./consts"
 
-export const PanelClass = "bg-slate-600 rounded-xl p-3"
+export const PanelClass = "bg-slate-600 rounded-xl p-3 w-100"
 
 export const Tile = ({ children, isActive = false, activeColor = defaultActiveColor, onClick }) => {
 
@@ -15,7 +15,7 @@ export const Tile = ({ children, isActive = false, activeColor = defaultActiveCo
 
 export const Tiles = ({ children }) => (
     <div
-        className='ml-3 bg-slate-600 h-min p-3 rounded-xl flex-co'>
+        className='ml-3 bg-slate-600 h-min p-3 rounded-xl flex-col overflow-y-auto max-h-[calc(100vh-100px)]'>
         {children}
     </div>
 )

@@ -5,11 +5,14 @@ import { useJobs } from "../Job/job.hook"
 export const PresetView = ({ data }) => {
 
     const { binaries } = useBinaries()
-    const { runJob } = useJobs(data.uid)
+    const { runJob, refresh } = useJobs(data.uid, 0)
 
     const formRunJob = (e) => {
         e.preventDefault()
-        runJob(e.target.binary_id.value).then(() => alert("Job Started")).catch(e => {
+        runJob(e.target.binary_id.value).then(() => {
+            alert("Job Started")
+            refresh()
+        }).catch(e => {
             console.log(e)
             alert("Error, cannot start job\n" + e?.detail)
         })

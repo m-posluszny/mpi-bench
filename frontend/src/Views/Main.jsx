@@ -28,8 +28,11 @@ export const MainView = () => {
   const [selectedBinary, selectBin] = useSelector();
   const [selectedPreset, selectPreset] = useSelector(null);
   const [selectedJob, selectJob] = useSelector(null);
+  const [selectedRun, selectRun] = useSelector(null);
 
   const onPresetSelect = (data) => {
+    selectJob(null);
+    selectRun(null)
     if (data === null || data.uid === selectedPreset) {
       setViewParams(null);
       selectPreset(null);
@@ -41,11 +44,23 @@ export const MainView = () => {
     selectPreset(data.uid);
   }
 
+  const onRunSelect = (data) => {
+    if (data === null || data.uid === selectedRun) {
+      setViewParams(null);
+      selectRun(null);
+      setView(MultiViewEnum.NONE);
+      return;
+    }
+    setView(MultiViewEnum.RUN_VIEW);
+    setViewParams(data);
+    selectRun(data);
+  }
+
   return (
     <div className=''>
       <NavbarView />
-      <main className="mx-1 flex flex-row  overflow-y-visible overflow-x-hidden">
-        <div className="mx-1 flex flex-row  overflow-y-visible overflow-x-hidden">
+      <main className="mx-1 flex overflow-auto">
+        <div className="mx-1 flex ">
           <BinariesView onCreate={() => { setView(MultiViewEnum.BINARY_CREATE); console.log("v") }}
             onSelect={selectBin}
             activeUid={selectedBinary}
@@ -57,11 +72,11 @@ export const MainView = () => {
           />
           {
             selectedPreset &&
-            <JobsView onCompare={() => setView(MultiViewEnum.JOB_COMPARE)} puid={selectedPreset} />
+            <JobsView puid={selectedPreset} onSelect={selectJob} activeUid={selectedJob?.uid} />
           }
           {
-            selectedJob &&
-            <RunsView />
+            selectedPreset && selectedJob &&
+            <RunsView juid={selectedJob.uid} activeUid={selectedRun?.uid} onSelect={onRunSelect} />
           }
         </div>
         <div className='w-50 flex ml-5'>

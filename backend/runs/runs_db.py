@@ -34,20 +34,33 @@ def create(cur: cursor, request: RunRequest, owner_uid: UUID):
     return get(cur, uid, owner_uid)
 
 
-def get_all(cur: cursor, owner_uid: UUID) -> List[Run]:
+def get_all(cur: cursor, owner_uid: UUID, job_uid: Optional[UUID] = None) -> List[Run]:
+    q = f"select * from runs_view where owner_uid = %s"
+    args = [str(owner_uid)]
+    if job_uid:
+        q += " and job_uid = %s"
+        args.append(str(job_uid))
     cur.execute(
-        f"select * from runs_view where owner_uid = %s",
-        (str(owner_uid),),
+        q,
+        args,
     )
     return Run.convert_many(cur)
 
 
-def get(cur: cursor, uid: UUID, user_uid: Optional[UUID] = None) -> Run:
+def get(
+    cur: cursor,
+    uid: UUID,
+    user_uid: Optional[UUID] = None,
+    job_uid: Optional[UUID] = None,
+) -> Run:
     q = f"select * from runs_view where uid = %s"
     ps = [str(uid)]
     if user_uid:
         q += " and owner_uid = %s"
         ps.append(str(user_uid))
+    if job_uid:
+        q += " and job_uid = %s"
+        ps.append(str(job_uid))
     cur.execute(q, ps)
     return Run.convert_one(cur)
 

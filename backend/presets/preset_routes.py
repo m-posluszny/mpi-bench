@@ -23,7 +23,7 @@ async def get_jobs(
     user_uid: UUID = Depends(authorised_user),
     cur=Depends(DbDriver.db_cursor),
 ):
-    return {"items": job_db.get_all(cur, user_uid)}
+    return {"items": job_db.get_all(cur, uid)}
 
 
 @router.post("/{uid}/jobs", response_model=PresetJob)
@@ -54,3 +54,17 @@ async def delete_preset(
     if not preset_db.get(cur, uid, user_uid):
         raise HTTPException(status_code=404, detail="Preset not found")
     preset_db.delete(cur, uid, user_uid)
+
+
+@router.delete("/{uid}/jobs/{job_id}")
+async def delete_job(
+    uid: UUID,
+    job_id: UUID,
+    user_uid: UUID = Depends(authorised_user),
+    cur=Depends(DbDriver.db_cursor),
+):
+    if not preset_db.get(cur, uid, user_uid):
+        raise HTTPException(status_code=404, detail="Preset not found")
+    if not job_db.get(cur, job_id, user_uid):
+        raise HTTPException(status_code=404, detail="Job not found")
+    job_db.delete(cur, job_id, user_uid)

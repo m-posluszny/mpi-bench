@@ -12,3 +12,10 @@ export const MultiViewEnum = {
     RUN_VIEW: "Run",
     JOB_COMPARE: "Comparison",
 };
+
+export const statusColor = {
+        "FINISHED": "green",
+        "FAILED": "red",
+        "RUNNING": "blue",
+        "PENDING": "yellow"
+    }

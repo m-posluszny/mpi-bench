@@ -2,6 +2,7 @@ import { BinaryCreateView } from "../ Bin/binCreate.component"
 import { MultiViewEnum } from "../Misc/consts"
 import { PresetCreateView } from "../Presets/presetCreate.component"
 import { PresetView } from "../Presets/presetView"
+import { RunView } from "../Run/runView"
 
 export const MultiPanel = ({ view, data }) => {
     switch (view) {
@@ -11,10 +12,8 @@ export const MultiPanel = ({ view, data }) => {
             return <PresetCreateView />
         case MultiViewEnum.PRESET_VIEW:
             return <PresetView data={data} />
-        case MultiViewEnum.JOB_VIEW:
-            return <div>Job view</div>
         case MultiViewEnum.RUN_VIEW:
-            return <div>Run view</div>
+            return <RunView data={data} />
         case MultiViewEnum.JOB_COMPARE:
             return <div>Job compar</div>
         default:
