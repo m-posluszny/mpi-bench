@@ -9,6 +9,8 @@ export const useBinaries = () => {
     const { withAuth, authFetcher } = useAuth();
     const { data, refresh, loading} = useCore(URL_BINARIES(),null, true, {}, authFetcher);
 
+    const getBin = (uid) => data.items.find((bin) => bin.uid === uid)
+
     const deleteBin = (uid)=>remove(URL_BINARIES(uid)).finally(refresh)
 
     const createBin = (fileForm, metadata)=>withAuth(post, URL_BINARIES(),
@@ -18,5 +20,5 @@ export const useBinaries = () => {
         );
     
 
-    return {binaries:data? data.items : [], loading, refresh, deleteBin, createBin}
+    return {binaries:data? data.items : [], loading, refresh, deleteBin, createBin, getBin}
 }

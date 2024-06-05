@@ -54,14 +54,25 @@ def run_benchmark(run_uid: UUID):
     t0 = time()
     p = start_process(bin, params.n_proc, params.flags, run.workspace)
     with open(log_file, "w") as f:
-        while p.poll() is None:
-            output = p.stdout.read()  # type: ignore
+        while True:
+            ret_code = p.poll()
+            output = p.stdout.readline()
+            print(output)
+            print(ret_code)
             if output:
                 f.write(output)
                 f.flush()
+
+            if ret_code is not None:
+                # Process has terminated, break the loop
+                remaining_output = p.stdout.read()
+                f.write(remaining_output)
+                f.flush()
+                break
+
         t1 = time() - t0
         metrics = generate_metrics(run.workspace)
-        if p.poll() != 0:
+        if ret_code != 0:
             for cur in db.db_cursor():
                 runs_db.update(cur, run_uid, Status.FAILED, t1, metrics)
             print("SIM FAILED")

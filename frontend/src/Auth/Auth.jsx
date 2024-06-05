@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { getToken, deleteToken, registerUser, getUser } from "./Api.jsx";
 import { useHistory } from "react-router-dom";
+import { useSelected } from "../Job/jobSelect.hook.js";
 
 export const AuthContext = createContext();
 export const UserContext = createContext();
@@ -9,6 +10,7 @@ export function Auth({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userContent, setUserContent] = useState(null);
+  const { resetList } = useSelected();
   const history = useHistory();
 
   const checkAuth = async () => {
@@ -85,6 +87,7 @@ export function Auth({ children }) {
     }
   };
   const logout = async () => {
+    resetList()
     try {
       await deleteToken();
     } catch (error) {

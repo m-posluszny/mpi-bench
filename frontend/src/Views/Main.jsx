@@ -7,6 +7,7 @@ import { NavbarView } from './Navbar';
 import { MultiPanel } from './MultiPanel';
 import { MultiViewEnum } from '../Misc/consts';
 import { useState } from 'react';
+import { useSelected } from '../Job/jobSelect.hook';
 
 export const useSelector = () => {
   const [s, setS] = useState(
@@ -24,6 +25,7 @@ export const useSelector = () => {
 
 export const MainView = () => {
   const [view, setView] = useState(MultiViewEnum.NONE);
+  const { selectedList } = useSelected();
   const [viewParams, setViewParams] = useState(null);
   const [selectedBinary, selectBin] = useSelector();
   const [selectedPreset, selectPreset] = useSelector(null);
@@ -56,6 +58,14 @@ export const MainView = () => {
     selectRun(data);
   }
 
+  const onPlot = () => {
+    if (selectedList?.length === 0) {
+      alert("Please select at least one job")
+      return
+    }
+    setView(MultiViewEnum.JOB_PLOT);
+  }
+
   return (
     <div className=''>
       <NavbarView />
@@ -72,7 +82,7 @@ export const MainView = () => {
           />
           {
             selectedPreset &&
-            <JobsView puid={selectedPreset} onSelect={selectJob} activeUid={selectedJob?.uid} />
+            <JobsView puid={selectedPreset} onSelect={selectJob} activeUid={selectedJob?.uid} onPlot={onPlot} activeBinaryUid={selectedBinary} />
           }
           {
             selectedPreset && selectedJob &&
@@ -81,6 +91,9 @@ export const MainView = () => {
         </div>
         <div className='w-50 flex ml-5'>
           <MultiPanel view={view} data={viewParams} />
+        </div>
+        <div hidden className='bg-blue-400 bg-indigo-500'>
+
         </div>
       </main>
       <Footer />

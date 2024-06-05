@@ -73,6 +73,6 @@ CREATE TABLE
         metrics JSONB,
         FOREIGN KEY (binary_uid) REFERENCES binaries (uid) ON DELETE CASCADE,
         FOREIGN KEY (owner_uid) REFERENCES users (uid) ON DELETE CASCADE,
-        FOREIGN KEY (param_uid) REFERENCES parameters (uid),
+        FOREIGN KEY (param_uid) REFERENCES parameters (uid) ON DELETE CASCADE,
         FOREIGN KEY (job_uid) REFERENCES preset_jobs (uid) ON DELETE CASCADE
     );

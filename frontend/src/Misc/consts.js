@@ -10,7 +10,7 @@ export const MultiViewEnum = {
     PRESET_VIEW: "Preset",
     JOB_VIEW: "Job",
     RUN_VIEW: "Run",
-    JOB_COMPARE: "Comparison",
+    JOB_PLOT: "Job Plot",
 };
 
 export const statusColor = {
@@ -18,4 +18,11 @@ export const statusColor = {
         "FAILED": "red",
         "RUNNING": "blue",
         "PENDING": "yellow"
+    }
+
+export const statusAnimate = {
+        "FINISHED": "",
+        "FAILED": "",
+        "RUNNING": "animate-pulse",
+        "PENDING": ""
     }

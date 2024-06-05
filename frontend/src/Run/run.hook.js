@@ -6,6 +6,7 @@ export const URL_RUNS = (uid="") => `/api/runs/${uid}`
 
 export const useRunLog = (uid, _interval=250) =>{
     const {  authFetcher } = useAuth();
+    console.log(uid)
     const [interval, setInterval] = useState(_interval);
     const { data:run} = useCore(URL_RUNS(uid),{}, true, {refreshInterval: interval}, authFetcher);
     const { data, refresh, loading} = useCore(URL_RUNS(uid)+"/log",{}, true, {refreshInterval: interval}, authFetcher);
@@ -13,8 +14,10 @@ export const useRunLog = (uid, _interval=250) =>{
     useEffect(() => {
         if (run?.status === "FINISHED" || run?.status === "FAILED") {
             setInterval(0);
+        }else{
+            setInterval(_interval);
         }
-    }, [run])
+    }, [run,  uid])
     return {log:data? data : "", loading, refresh}
 }
 

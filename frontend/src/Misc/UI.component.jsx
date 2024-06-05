@@ -2,13 +2,15 @@ import { defaultActiveColor } from "./consts"
 
 export const PanelClass = "bg-slate-600 rounded-xl p-3 w-100"
 
-export const Tile = ({ children, isActive = false, activeColor = defaultActiveColor, onClick }) => {
+export const ParseDate = (date) => new Date(date).toLocaleString("en-UK")
+
+export const Tile = ({ className, children, isActive = false, activeColor = defaultActiveColor, onClick }) => {
 
     const activeStyle = isActive ? `border ${activeColor}` : ""
     const hoverStyle = onClick ? "hover:bg-slate-400" : ""
     return <div
         onClick={onClick ? onClick : () => { }}
-        className={`bg-slate-500 rounded-xl p-3 my-1 ${activeStyle} ${hoverStyle} `}>
+        className={`bg-slate-500 rounded-xl p-3 my-1 ${className} ${activeStyle} ${hoverStyle} `}>
         {children}
     </div>
 }
