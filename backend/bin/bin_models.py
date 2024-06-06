@@ -15,6 +15,7 @@ class BinMeta(BinMetaRequest):
     uid: UUID
     owner_uid: UUID
     created: datetime
+    runs_count: int = 0
 
     @classmethod
     def _from_row(cls, row):
@@ -26,6 +27,7 @@ class BinMeta(BinMetaRequest):
             tag=row["tag"],
             name=row["name"],
             branch=row["branch"],
+            runs_count=row["runs_count"],
         )
 
 

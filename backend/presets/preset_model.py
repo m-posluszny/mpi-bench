@@ -8,6 +8,7 @@ from uuid import UUID
 class PresetRequest(CustomBaseModel):
     name: str
     description: str = ""
+    trigger_new: bool = False
     parameters: List[ParametersRequest]
 
 
@@ -25,6 +26,7 @@ class Preset(PresetRequest):
             name=row["name"],
             description=row["description"],
             created=row["created"],
+            trigger_new=row["trigger_new"],
         )
 
 

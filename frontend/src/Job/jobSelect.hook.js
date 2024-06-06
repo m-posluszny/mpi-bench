@@ -27,6 +27,7 @@ export const SelectedProvider = ({ children }) => {
 
   const resetList = () => {
     setSelectedList([]);
+    localStorage.removeItem('selectedList');
   };
 
 

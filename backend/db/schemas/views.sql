@@ -11,7 +11,7 @@ SELECT
     count(runs.uid) as runs_count
 FROM
     binaries as b
-    JOIN runs on runs.binary_uid = b.uid
+    LEFT JOIN runs on runs.binary_uid = b.uid
 GROUP BY
     b.uid
 ORDER BY
@@ -89,6 +89,7 @@ SELECT
     name,
     p.owner_uid,
     description,
+    p.trigger_new,
     p.created,
     json_agg (pj.data) as params
 FROM
@@ -111,4 +112,22 @@ FROM
     preset_jobs as j
     JOIN runs_json_view as rj ON j.uid = rj.job_uid
 GROUP BY
-    j.uid
+    j.uid;
+
+CREATE
+OR REPLACE VIEW unique_branches AS
+SELECT DISTINCT
+    branch
+FROM
+    binaries
+WHERE
+    branch IS NOT NULL;
+
+CREATE
+OR REPLACE VIEW unique_tags AS
+SELECT DISTINCT
+    tag
+FROM
+    binaries
+WHERE
+    tag IS NOT NULL;

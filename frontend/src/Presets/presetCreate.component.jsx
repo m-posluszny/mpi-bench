@@ -86,11 +86,10 @@ export const PresetCreateView = () => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
         let data = parseForm(event);
+        console.log(data)
         const form = event.target;
         const parameters = parametersFromForm(data)
-
-        console.log(data, form)
-        return createPreset({ name: data.name, description: data.description, parameters })
+        return createPreset({ name: data.name, description: data.description, parameters, trigger_new: data.trigger_new })
             .then(data => {
                 alert('Preset created successfully');
                 form.reset()
@@ -120,6 +119,12 @@ export const PresetCreateView = () => {
                     Description:
                 </label>
                 <input className={inputClass} type="text" name="description" />
+            </FormRow>
+            <FormRow>
+                <label className={labelClass}>
+                    Trigger on upload
+                </label>
+                <input type="checkbox" name="trigger_new" value="true" />
             </FormRow>
             <FormRow>
                 <label className={labelClass}>

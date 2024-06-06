@@ -1,6 +1,7 @@
 import json
 import glob
 import os
+import shutil
 import config
 from pathlib import Path
 from time import time
@@ -8,7 +9,7 @@ from uuid import UUID
 from subprocess import Popen
 import subprocess
 from worker import worker_app, db
-from runs.runs_model import Status
+from runs.runs_model import Status, Run
 from runs import runs_db
 from bin.bin_models import BinMeta
 from bin import bin_db
@@ -37,7 +38,26 @@ def generate_metrics(workdir: str):
 
 
 @worker_app.task
+def delete_run(run_uid: UUID):
+    ws = Run.get_workspace(run_uid)
+    print("DELETE RUN", ws)
+    shutil.rmtree(ws)
+
+
+@worker_app.task
+def delete_bin(binary_path: str):
+    print("DELETE BIN", binary_path)
+    os.remove(binary_path)
+
+
+@worker_app.task
 def run_benchmark(run_uid: UUID):
+    try:
+        for cur in db.db_cursor():
+            run = runs_db.get(cur, run_uid)
+    except:
+        print("Run not found")
+        return
     for cur in db.db_cursor():
         runs_db.update(cur, run_uid, Status.RUNNING, 0)
         run = runs_db.get(cur, run_uid)

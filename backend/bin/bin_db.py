@@ -12,7 +12,7 @@ def create(cur, uid: UUID, owner_uid: UUID, path: str):
 
 def get(cur: cursor, uid: UUID):
     cur.execute(
-        f"select * from binaries where uid = %s",
+        f"select * from bin_view where uid = %s",
         (str(uid),),
     )
     return BinMeta.convert_one(cur)
@@ -20,17 +20,29 @@ def get(cur: cursor, uid: UUID):
 
 def get_from_run(cur: cursor, run_uid: UUID):
     cur.execute(
-        f"select b.*  from binaries as b join runs as r on b.uid = r.binary_uid where r.uid = %s",
+        f"select b.*  from bin_view as b join runs as r on b.uid = r.binary_uid where r.uid = %s",
         (str(run_uid),),
     )
     return BinMeta.convert_one(cur)
 
 
-def get_many(cur: cursor, owner_uid: UUID):
-    cur.execute(
-        f"select * from binaries where owner_uid = %s",
-        (str(owner_uid),),
-    )
+def get_many(
+    cur: cursor, owner_uid: UUID, name: str = "", branch: str = "", tag: str = ""
+):
+    q = f"select * from bin_view where owner_uid = %s"
+    args = [
+        str(owner_uid),
+    ]
+    if name:
+        q += " and name ilike %s"
+        args.append(f"%{name}%")
+    if branch:
+        q += " and branch = %s"
+        args.append(branch)
+    if tag:
+        q += " and tag = %s"
+        args.append(tag)
+    cur.execute(q, args)
     return BinMeta.convert_many(cur)
 
 

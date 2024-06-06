@@ -17,18 +17,23 @@ router = APIRouter(prefix="/binaries", tags=["binaries"])
 
 @router.get("/", response_model=ManyModel[BinMetaResponse])
 async def get_binaries(
-    user_uid: UUID = Depends(authorised_user), cur=Depends(DbDriver.db_cursor)
+    name: str = "",
+    branch: str = "",
+    tag: str = "",
+    user_uid: UUID = Depends(authorised_user),
+    cur=Depends(DbDriver.db_cursor),
 ):
-    return {"items": db_bin.get_many(cur, user_uid)}
+    return {"items": db_bin.get_many(cur, user_uid, name, branch, tag)}
 
 
 @router.post("/")
 async def create_upload_file(
     file: UploadFile,
     user_uid: UUID = Depends(authorised_user),
-    cur=Depends(DbDriver.db_cursor),
+    session=Depends(DbDriver.db_session),
 ):
 
+    cur, conn = session
     filename = uuid.uuid4()
     file_path = f"{config.BIN_UPLOAD_DIR}/{filename}"
     os.makedirs(config.BIN_UPLOAD_DIR, exist_ok=True)
@@ -38,7 +43,8 @@ async def create_upload_file(
     st = os.stat(file_path)
     os.chmod(file_path, st.st_mode | stat.S_IEXEC)
     db_bin.create(cur, filename, user_uid, file_path)
-    return {"uid": filename}
+    conn.commit()
+    return db_bin.get(cur, filename)
 
 
 @router.put("/{uid}", response_model=BinMetaResponse)

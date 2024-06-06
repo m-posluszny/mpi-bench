@@ -1,4 +1,5 @@
-import { Header, Tile, Tiles } from "../Misc/UI.component"
+import { useState } from "react";
+import { Header, Select, Tile, Tiles, Input } from "../Misc/UI.component"
 import { useBinaries } from "./bin.hook"
 import { FaDeleteLeft } from "react-icons/fa6";
 
@@ -14,7 +15,7 @@ export const BinaryView = ({ binary, isActive, onDelete, onSelect }) => {
 
     return (
         <Tile isActive={isActive} onClick={() => onSelect(binary.uid)}>
-            <div className="mx-auto w-100">
+            <div className="mx-auto w-full">
                 <div className="flex">
                     <h2 className="font-bold">
                         {binary?.name}
@@ -34,14 +35,36 @@ export const BinaryView = ({ binary, isActive, onDelete, onSelect }) => {
 }
 export const BinariesView = ({ activeUid, onSelect, onCreate }) => {
 
-    const { binaries, deleteBin } = useBinaries()
+    const [branch, setBranch] = useState("")
+    const [tag, setTag] = useState("")
+    const [name, setName] = useState("")
+    const { binaries, deleteBin, branches, tags } = useBinaries(name, tag, branch)
 
     return (
         <Tiles>
             <Header title="Binaries" btnTitle="Upload" btnClass="bg-orange-700" onClick={onCreate} />
-            {
-                binaries.map((binary) => <BinaryView key={binary.uid} binary={binary} isActive={binary.uid === activeUid} onSelect={onSelect} onDelete={deleteBin} />)
-            }
+            <div className="bg-gray-500 rounded p-1">
+                <div className="w-full mx-1 pe-2">
+                    <h3>Name</h3>
+                    <Input value={name} setValue={setName} placeholder="Name" />
+                </div>
+                <div className="flex mb-2">
+
+                    <div className="w-1/2 mx-1">
+                        <h3>Branch</h3>
+                        <Select setItem={setBranch} items={branches} item={branch} className="w-full" all />
+                    </div>
+                    <div className="w-1/2 mx-1">
+                        <h3>Tag</h3>
+                        <Select setItem={setTag} items={tags} item={tag} className="w-full" all />
+                    </div>
+                </div>
+            </div>
+            <>
+                {
+                    binaries.map((binary) => <BinaryView key={binary.uid} binary={binary} isActive={binary.uid === activeUid} onSelect={onSelect} onDelete={deleteBin} />)
+                }
+            </>
 
         </Tiles >
     )

@@ -87,13 +87,13 @@ export function Auth({ children }) {
     }
   };
   const logout = async () => {
-    resetList()
     try {
       await deleteToken();
     } catch (error) {
       console.log(error);
       throw error;
     }
+    resetList()
     DeauthUser();
     history.push("/login");
   };

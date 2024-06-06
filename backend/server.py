@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Request
 import auth.auth as auth
+from misc import misc_routes
 from bin import bin_routes
 from runs import runs_routes
 from presets import preset_routes
@@ -47,6 +48,7 @@ router.include_router(auth.router)
 router.include_router(bin_routes.router)
 router.include_router(runs_routes.router)
 router.include_router(preset_routes.router)
+router.include_router(misc_routes.router)
 app.include_router(router)
 
 

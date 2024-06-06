@@ -1,9 +1,10 @@
 fastapi
 fastapi_jwt_auth
+redis
 celery
 psycopg2-binary
 psycopg2-pool
 uvicorn
 pydantic
 python-multipart
-shutil
+shutils

@@ -1,7 +1,7 @@
 from pathlib import Path
 from fastapi import Depends, APIRouter, HTTPException
 from models.base import ManyModel
-from runs.runs_model import Run, RunRequest
+from runs.runs_model import Run, RunRequest, Status
 from db.driver import DbDriver
 from auth.auth import authorised_user
 from uuid import UUID
@@ -17,10 +17,11 @@ router = APIRouter(prefix="/runs", tags=["runs"])
 @router.get("/", response_model=ManyModel[Run])
 async def get_runs(
     job_uid: Optional[UUID] = None,
+    status: Optional[Status] = None,
     user_uid: UUID = Depends(authorised_user),
     cur=Depends(DbDriver.db_cursor),
 ):
-    return {"items": runs_db.get_all(cur, user_uid, job_uid)}
+    return {"items": runs_db.get_all(cur, user_uid, job_uid, status)}
 
 
 @router.get("/{run_uid}", response_model=Run)

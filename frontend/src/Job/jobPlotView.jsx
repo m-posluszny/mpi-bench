@@ -1,5 +1,5 @@
 import { useSelected } from "./jobSelect.hook";
-import { PanelClass, ParseDate } from "../Misc/UI.component"
+import { PanelClass, ParseDate, Select } from "../Misc/UI.component"
 import { useBinaries } from "../ Bin/bin.hook";
 import { ScatterChart } from "./Plot";
 import { useState } from "react";
@@ -68,7 +68,10 @@ export const usePlotData = () => {
         })
     }
 
-    const jobLabel = (job) => `${ParseDate(job.created)} | ${getBin(job.binary_uid).name} | ${job.status}`
+    const jobLabel = (job) => {
+        const bin = getBin(job.binary_uid)
+        return `${ParseDate(job.created)} | ${bin?.name}-${bin?.tag}-${bin?.branch}`
+    }
 
     const prepareDataset = (jobs) => {
         const out = {}
@@ -111,6 +114,39 @@ export const usePlotData = () => {
     return { selectedList, getBin, jobLabel, columns: getColumns(dataset), dataset, datasetToPlot }
 
 }
+export const Table = ({ dataset, columns }) => {
+    const headerClass = "text-black bg-blue-400  px-5 py-3 border-slate-600"
+    const cellClass = "text-black border px-5 py-3 border-slate-600"
+    const rowClass = "hover:bg-slate-200"
+    return <table className="table-auto bg-white rounded shadow-lg border-collapse">
+        <thead>
+            <tr>
+                <th className={headerClass} key="label">Label</th>
+                {columns.map(header => (
+                    <th className={headerClass} key={header}>{header}</th>
+                ))}
+            </tr>
+        </thead>
+        <tbody>
+            {Object.entries(dataset).map(([key, rows], index) => (
+
+                rows.map((row, rowIndex) => (
+                    <tr className={rowClass} key={index}>
+                        <td className={cellClass} key="label">{key}</td>
+                        {
+                            columns.map(header => (
+                                <td className={cellClass} key={header}>{row[header].toFixed(2)}</td>
+                            ))
+                        }
+                    </tr>
+
+                ))
+
+
+            ))}
+        </tbody>
+    </table>
+}
 
 export const JobPlotView = () => {
     const { dataset, columns, datasetToPlot } = usePlotData()
@@ -119,7 +155,6 @@ export const JobPlotView = () => {
     const [freeX, setFreeX] = useState("duration")
     const [freeY, setFreeY] = useState("n_proc")
 
-    const cellClass = "p-5"
 
     return <div className={PanelClass + " px-10  h-[80vh] overflow-y-auto"}>
         <div className="text-white font-bold my-3">
@@ -152,63 +187,20 @@ export const JobPlotView = () => {
                 <div>
                     Select X Axis
                 </div>
-                <select
-                    className="text-white rounded p-2 bg-slate-400"
-                    value={freeX} // ...force the select's value to match the state variable...
-                    onChange={e => setFreeX(e.target.value)} // ... and update the state variable on any change!
-                >
-                    {columns.map(header => (
-                        <option value={header}>{header}</option>
-                    ))}
-                </select>
+                <Select item={freeX} setItem={setFreeX} items={columns} />
                 <hr className="my-4 mt-5" />
                 <div>
                     Select Y Axis
                 </div>
-                <select
-                    className="text-white rounded p-2 bg-slate-400"
-                    value={freeY} // ...force the select's value to match the state variable...
-                    onChange={e => setFreeY(e.target.value)} // ... and update the state variable on any change!
-                >
-                    {columns.map(header => (
-                        <option value={header}>{header}</option>
-                    ))}
-                </select>
+                <Select item={freeY} setItem={setFreeY} items={columns} />
             </div>
         </div>
         <hr className="my-4 mt-5" />
         <div className="text-white font-bold">
             Table
         </div>
+        <Table dataset={dataset} columns={columns} />
         <div>
-            <table className="table-auto">
-                <thead>
-                    <tr>
-                        <th className="p-5" key="label">Label</th>
-                        {columns.map(header => (
-                            <th className="p-5" key={header}>{header}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.entries(dataset).map(([key, rows], index) => (
-
-                        rows.map((row, rowIndex) => (
-                            <tr className={cellClass} key={index}>
-                                <td className={cellClass} key="label">{key}</td>
-                                {
-                                    columns.map(header => (
-                                        <td className={cellClass} key={header}>{row[header].toFixed(2)}</td>
-                                    ))
-                                }
-                            </tr>
-
-                        ))
-
-
-                    ))}
-                </tbody>
-            </table>
         </div>
     </div>
 

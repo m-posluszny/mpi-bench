@@ -32,6 +32,7 @@ CREATE TABLE
         owner_uid UUID NOT NULL,
         name TEXT,
         description TEXT,
+        trigger_new BOOLEAN NOT NULL,
         created TIMESTAMP NOT NULL,
         FOREIGN KEY (owner_uid) REFERENCES users (uid)
     );
@@ -76,3 +77,21 @@ CREATE TABLE
         FOREIGN KEY (param_uid) REFERENCES parameters (uid) ON DELETE CASCADE,
         FOREIGN KEY (job_uid) REFERENCES preset_jobs (uid) ON DELETE CASCADE
     );
+
+CREATE INDEX IF NOT EXISTS preset_owner_name
+ON presets(owner_uid, name);
+
+CREATE INDEX IF NOT EXISTS bin_params
+ON binaries(owner_uid, name, branch, tag);
+
+CREATE INDEX IF NOT EXISTS run_fk_binary
+ON runs(binary_uid);
+
+CREATE INDEX IF NOT EXISTS run_fk_job
+ON runs(job_uid);
+
+CREATE INDEX IF NOT EXISTS parameter_fk_preset
+ON parameters(preset_uid);
+
+CREATE INDEX IF NOT EXISTS preset_owner
+ON presets(owner_uid);

@@ -1,18 +1,16 @@
 from uuid import UUID
 from typing import List, Optional
 from fastapi import HTTPException
-from db.driver import cursor, LoggingConnection
+from db.driver import cursor
 from presets.preset_model import PresetRequest, Preset
 from psycopg2.extras import Json
-import json
 
 
 def create(session, r: PresetRequest, owner_uid: UUID):
-    cur: cursor
     cur, conn = session
     cur.execute(
-        "insert into presets (name, description, owner_uid) values (%s, %s, %s) returning uid",
-        (r.name, r.description, str(owner_uid)),
+        "insert into presets (name, description, owner_uid, trigger_new) values (%s, %s, %s, %s) returning uid",
+        (r.name, r.description, str(owner_uid), r.trigger_new),
     )
     row = cur.fetchone()
     if not row:
@@ -34,11 +32,15 @@ def create(session, r: PresetRequest, owner_uid: UUID):
     return get(cur, uid, owner_uid)
 
 
-def get_all(cur: cursor, owner_uid: UUID) -> List[Preset]:
-    cur.execute(
-        f"select * from presets_view where owner_uid = %s",
-        (str(owner_uid),),
-    )
+def get_all(cur: cursor, owner_uid: UUID, name: str = "") -> List[Preset]:
+    q = f"select * from presets_view where owner_uid = %s"
+    args = [str(owner_uid)]
+    if name:
+        q += " and name ilike %s"
+        args.append(f"%{name}%")
+    q += " order by created desc"
+    print(q, args)
+    cur.execute(q, args)
     return Preset.convert_many(cur)
 
 

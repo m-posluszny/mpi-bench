@@ -34,12 +34,20 @@ def create(cur: cursor, request: RunRequest, owner_uid: UUID):
     return get(cur, uid, owner_uid)
 
 
-def get_all(cur: cursor, owner_uid: UUID, job_uid: Optional[UUID] = None) -> List[Run]:
+def get_all(
+    cur: cursor,
+    owner_uid: UUID,
+    job_uid: Optional[UUID] = None,
+    status: Optional[Status] = None,
+) -> List[Run]:
     q = f"select * from runs_view where owner_uid = %s"
     args = [str(owner_uid)]
     if job_uid:
         q += " and job_uid = %s"
         args.append(str(job_uid))
+    if status:
+        q += " and status = %s"
+        args.append(status.value)
     cur.execute(
         q,
         args,

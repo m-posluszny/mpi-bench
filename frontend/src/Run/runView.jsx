@@ -62,7 +62,7 @@ export const RunView = ({ data }) => {
             <div className="text-white font-bold my-3">
                 Logs
             </div>
-            {log.log && <textarea readOnly className="w-100 h-100 text-white bg-slate-700 rounded-xl  h-5/6 w-[35vh] mb-5" value={log.log}>
+            {log.log && <textarea readOnly className="w-full h-100 text-white bg-slate-700 rounded-xl  h-5/6 w-[35vh] mb-5" value={log.log}>
             </textarea>}
         </div>
     </div >

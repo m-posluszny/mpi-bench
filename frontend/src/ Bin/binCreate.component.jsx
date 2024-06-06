@@ -13,7 +13,8 @@ export const BinaryCreateView = () => {
         const name = form.elements.name.value;
         const tag = form.elements.tag.value;
         const branch = form.elements.branch.value;
-        const commit_uid = form.elements.commit.value;
+        let commit_uid = form.elements.commit.value;
+        commit_uid = commit_uid ? commit_uid : ""
 
         if (!file) {
             alert('Please select a file to upload.');
@@ -69,7 +70,7 @@ export const BinaryCreateView = () => {
                 <label className={labelClass}>
                     Commit UID
                 </label>
-                <input className={inputClass} type="text" name="commit" required />
+                <input className={inputClass} type="text" name="commit" />
             </FormRow>
             <FormRow>
                 <button className="bg-orange-600 rounded-2xl p-3 mx-auto" type="submit">Upload</button>

@@ -16,11 +16,11 @@ export const JobView = ({ job, isActive, onDelete, onSelect, isHighlighted }) =>
 
     const addClick = (e) => { e.stopPropagation(); addObject(job) }
     const color = statusColor[job.status]
-    const highlightClass = isHighlighted ? "bg-indigo-500" : ""
+    const highlightClass = isHighlighted ? "bg-purple-700" : ""
 
     return (
         <Tile className={highlightClass} isActive={isActive} onClick={() => onSelect(job)}>
-            <div className="mx-auto w-100">
+            <div className="mx-auto w-full">
                 <div className="flex">
                     <h2 className="font-bold mr-2">
                         {ParseDate(job.created)}
@@ -40,7 +40,7 @@ export const JobView = ({ job, isActive, onDelete, onSelect, isHighlighted }) =>
                 </h2>
                 <h2 className="font-bold bg-slate-400 px-2 rounded">
                     Time{' '}
-                    {job?.duration.toFixed(2)} s
+                    {job?.duration && job.duration.toFixed(2)} s
                 </h2>
             </div>
         </Tile>
@@ -48,6 +48,7 @@ export const JobView = ({ job, isActive, onDelete, onSelect, isHighlighted }) =>
 }
 export const JobsView = ({ puid, activeUid, onSelect, onPlot = () => { }, activeBinaryUid }) => {
     const { jobs, deleteJob } = useJobs(puid, 500)
+    console.log(activeBinaryUid, jobs.map(job => job.binary_uid))
     return (
         <Tiles>
             <Header title="Jobs" btnTitle="Plot" btnClass="bg-gray-500" onClick={onPlot} />

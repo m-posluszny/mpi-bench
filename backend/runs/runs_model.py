@@ -34,9 +34,13 @@ class Run(RunRequest):
     duration: Optional[float]
     metrics: Optional[dict]
 
+    @classmethod
+    def get_workspace(cls, uid):
+        return f"{config.RUN_DIR}/{uid}"
+
     @property
     def workspace(self):
-        return f"{config.RUN_DIR}/{self.uid}"
+        return self.get_workspace(self.uid)
 
     @classmethod
     def _from_row(cls, row):

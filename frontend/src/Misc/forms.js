@@ -4,7 +4,10 @@ export const parseForm = (e) => {
     const data = {};
     for (var x=0, y=form.elements.length; x < y; x++) {
         var field = form.elements[x];
-        if (field.name  && field.type != "submit") {
+        if (field.name && field.type == "checkbox") {
+            data[field.name] = field.checked;
+        }
+        else if (field.name  && field.type != "submit") {
             data[field.name] = field.value;
         }
     }

@@ -10,7 +10,7 @@ export const RunTile = ({ run, isActive, onDelete, onSelect }) => {
 
     return (
         <Tile isActive={isActive} onClick={onSelect ? () => onSelect(run) : null}>
-            <div className="mx-auto w-100">
+            <div className="mx-auto w-full">
                 <div className="flex">
                     <h2 className="font-bold mr-2">
                         {date.toLocaleString("en-UK")}

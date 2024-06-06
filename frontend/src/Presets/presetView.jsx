@@ -19,7 +19,7 @@ export const PresetView = ({ data }) => {
     }
 
     return (
-        <div className={PanelClass + " px-10 w-100"}>
+        <div className={PanelClass + " px-10 w-full"}>
             <div className="text-white font-bold my-3">
                 Preset View
             </div>
@@ -29,6 +29,14 @@ export const PresetView = ({ data }) => {
                 </div>
                 <div className="mx-2 font-bold">
                     {data.name}
+                </div>
+            </FormRow>
+            <FormRow>
+                <div>
+                    Trigger on upload:
+                </div>
+                <div className="mx-2 font-bold">
+                    {data.trigger_new ? "True" : "False"}
                 </div>
             </FormRow>
             {data.description &&
@@ -41,7 +49,7 @@ export const PresetView = ({ data }) => {
                     </div>
                 </FormRow>
             }
-            {binaries?.length && <FormGroup bgColor="bg-violet-500">
+            {binaries?.length > 0 && <FormGroup bgColor="bg-violet-500">
                 <div className="font-bold mx-4">
                     Run Job
                 </div>

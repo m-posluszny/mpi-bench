@@ -71,6 +71,16 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION notify_delete_run()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    PERFORM pg_notify('delete_run', OLD.uid::text);
+    RETURN OLD;
+END;
+$$;
+
 
 CREATE OR REPLACE PROCEDURE create_run(
     IN bin_uid UUID, 
@@ -112,5 +122,27 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         RAISE;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION trigger_new_bin() 
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    param RECORD;
+    buff UUID;
+BEGIN
+    FOR param IN
+        SELECT
+            uid
+        FROM
+            presets
+        WHERE
+            trigger_new = TRUE
+    LOOP
+        CALL begin_job(param.uid, NEW.uid, buff);
+    END LOOP;
+    RETURN NEW;
 END;
 $$;

@@ -3,11 +3,11 @@ import { useCore } from "../Api/core.hook"
 import { useAuth } from "../Auth/Auth.hook"
 import { post } from "../Api/core"
 
-export const URL_PRESETS = (uid="") => `/api/presets/${uid}` 
+export const URL_PRESETS = (uid="", name="") => `/api/presets/${uid}?name=${name}` 
 
-export const usePresets = () => {
+export const usePresets = (name="") => {
     const { withAuth, authFetcher } = useAuth();
-    const { data, refresh, loading} = useCore(URL_PRESETS(),null, true, {}, authFetcher);
+    const { data, refresh, loading} = useCore(URL_PRESETS("",name),null, true, {}, authFetcher);
 
     const deletePreset = (uid)=>remove(URL_PRESETS(uid))
 

@@ -5,7 +5,7 @@ import { useSelected } from "../Job/jobSelect.hook";
 export const NavbarView = () => {
     const { logout, user } = useAuth();
 
-    return <div className='p-2 bg-slate-700 rounded-2xl w-100 flex m-2'>
+    return <div className='p-2 bg-slate-700 rounded-2xl w-full flex m-2'>
         <h1 className="text-white text-2xl text-center font-bold py-1 px-2">
             MPI-Bench
         </h1>

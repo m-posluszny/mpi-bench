@@ -12,9 +12,11 @@ router = APIRouter(prefix="/presets", tags=["presets"])
 
 @router.get("/", response_model=ManyModel[Preset])
 async def get_presets(
-    user_uid: UUID = Depends(authorised_user), cur=Depends(DbDriver.db_cursor)
+    name: str = "",
+    user_uid: UUID = Depends(authorised_user),
+    cur=Depends(DbDriver.db_cursor),
 ):
-    return {"items": preset_db.get_all(cur, user_uid)}
+    return {"items": preset_db.get_all(cur, user_uid, name)}
 
 
 @router.get("/{uid}/jobs", response_model=ManyModel[PresetJob])

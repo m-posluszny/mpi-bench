@@ -92,7 +92,7 @@ export const MainView = () => {
         <div className='w-50 flex ml-5'>
           <MultiPanel view={view} data={viewParams} />
         </div>
-        <div hidden className='bg-blue-400 bg-indigo-500'>
+        <div hidden className='bg-blue-400 bg-indigo-500 bg-purple-700'>
 
         </div>
       </main>

@@ -10,7 +10,17 @@ EXCEPTION
       NULL;
 END;$$;
 
--- Triggers for binaries and users table
+-- Triggers for binaries to run presets that should be triggered on new run
+DO
+$$BEGIN
+CREATE TRIGGER bin_trigger_preset
+AFTER INSERT ON binaries
+FOR EACH ROW EXECUTE PROCEDURE trigger_new_bin();
+EXCEPTION
+   WHEN duplicate_object THEN
+      NULL;
+END;$$;
+
 DO
 $$BEGIN
 CREATE TRIGGER preset_created_trigger
@@ -21,7 +31,6 @@ EXCEPTION
       NULL;
 END;$$;
 
--- Triggers for binaries and users table
 DO
 $$BEGIN
 CREATE TRIGGER preset_jobs_created_trigger
@@ -66,7 +75,6 @@ EXCEPTION
       NULL;
 END;$$;
 
--- Triggers for binaries and users table
 DO
 $$BEGIN
 CREATE TRIGGER preset_created_trigger
@@ -77,7 +85,6 @@ EXCEPTION
       NULL;
 END;$$;
 
--- Triggers for binaries and users table
 DO
 $$BEGIN
 CREATE TRIGGER preset_created_trigger
@@ -103,10 +110,21 @@ END;$$;
 -- Trigger to handle run time updates on status change
 DO
 $$BEGIN
-CREATE TRIGGER delete_run_trigger
+CREATE TRIGGER delete_bin_trigger
 BEFORE DELETE ON binaries
 FOR EACH ROW
 EXECUTE PROCEDURE notify_delete_bin();
+EXCEPTION
+   WHEN duplicate_object THEN
+      NULL;
+END;$$;
+
+DO
+$$BEGIN
+CREATE TRIGGER delete_run_trigger
+BEFORE DELETE ON runs
+FOR EACH ROW
+EXECUTE PROCEDURE notify_delete_run();
 EXCEPTION
    WHEN duplicate_object THEN
       NULL;
