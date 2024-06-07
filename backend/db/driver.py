@@ -14,7 +14,7 @@ class DbDriver:
 
     def __init__(self, dbname, user, password, host="localhost", port=5432):
         if DbDriver._instance:
-            return self
+            return
 
         self.pool = psycopg2.pool.ThreadedConnectionPool(
             minconn=4,

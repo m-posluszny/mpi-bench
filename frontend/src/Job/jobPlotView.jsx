@@ -3,10 +3,12 @@ import { PanelClass, ParseDate, Select } from "../Misc/UI.component"
 import { useBinaries } from "../ Bin/bin.hook";
 import { ScatterChart } from "./Plot";
 import { useState } from "react";
+import { usePresets } from "../Presets/preset.hook"
 
 export const usePlotData = () => {
     const { selectedList } = useSelected()
     const { getBin } = useBinaries()
+    const { getPreset } = usePresets()
 
     function findCommonStringsInLists(lists) {
         if (lists.length === 0) return [];
@@ -70,7 +72,8 @@ export const usePlotData = () => {
 
     const jobLabel = (job) => {
         const bin = getBin(job.binary_uid)
-        return `${ParseDate(job.created)} | ${bin?.name}-${bin?.tag}-${bin?.branch}`
+        const preset = getPreset(job.preset_uid)
+        return `${ParseDate(job.created)} | ${preset?.name} | ${bin?.name}-${bin?.tag}-${bin?.branch}`
     }
 
     const prepareDataset = (jobs) => {
@@ -98,7 +101,7 @@ export const usePlotData = () => {
         Object.entries(dataset).forEach(([k, v]) => {
             datasets.push({
                 label: k,
-                data: v.map((r) => {
+                data: v.sort((a, b) => a[x] - b[x]).map((r) => {
                     return { x: r[x], y: r[y] }
                 }),
                 // backgroundColor: 'rgba(75, 192, 192, 0.4)',

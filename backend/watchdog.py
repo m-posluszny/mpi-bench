@@ -2,7 +2,7 @@ import threading
 import os
 from typing import final
 import config
-from worker import db
+from worker import get_db
 import tasks
 import select
 
@@ -19,38 +19,19 @@ class Watchdog:
     @staticmethod
     def poll(conn):
         conn.poll()
-        if conn.notifies:
-            print(conn.notifies)
         while conn.notifies:
-            print("DO SOMEThiNG")
             notify = conn.notifies.pop(0)
-            print("SCHEDULING", notify)
             if notify.channel == "new_run":
-                Watchdog.on_new_run(notify)
+                tasks.run_benchmark.delay(notify.payload)
             elif notify.channel == "delete_bin":
-                Watchdog.on_delete_bin(notify)
+                tasks.delete_bin.delay(notify.payload)
             elif notify.channel == "delete_run":
-                Watchdog.on_delete_run(notify)
-
-    @staticmethod
-    def on_new_run(notify):
-        print("RUN", notify.payload)
-        tasks.run_benchmark.delay(notify.payload)
-
-    @staticmethod
-    def on_delete_bin(notify):
-        print("DELETE", notify.payload)
-        tasks.delete_bin.delay(notify.payload)
-
-    @staticmethod
-    def on_delete_run(notify):
-        print("DELETE", notify.payload)
-        tasks.delete_run.delay(notify.payload)
+                tasks.delete_run.delay(notify.payload)
 
     @classmethod
     def listener(cls):
         print("Starting listener")
-        for cur, conn in db.db_session(echo=True):
+        for cur, conn in get_db().db_session(echo=True):
             cur.execute("LISTEN delete_bin;")
             cur.execute("LISTEN delete_run;")
             cur.execute("LISTEN new_run;")

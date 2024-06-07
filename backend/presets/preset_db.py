@@ -26,7 +26,6 @@ def create(session, r: PresetRequest, owner_uid: UUID):
     )
     row = cur.fetchone()
     conn.commit()
-    print("done")
     if not row:
         raise Exception("this should not happen")
     return get(cur, uid, owner_uid)
@@ -39,7 +38,6 @@ def get_all(cur: cursor, owner_uid: UUID, name: str = "") -> List[Preset]:
         q += " and name ilike %s"
         args.append(f"%{name}%")
     q += " order by created desc"
-    print(q, args)
     cur.execute(q, args)
     return Preset.convert_many(cur)
 

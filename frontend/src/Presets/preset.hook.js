@@ -15,6 +15,7 @@ export const usePresets = (name="") => {
         return withAuth(post, URL_PRESETS(), metadata)
     } 
     
+    const getPreset = (uid) => data.items.find((bin) => bin.uid === uid)
 
-    return {presets:data? data.items : [], loading, refresh, deletePreset, createPreset}
+    return {presets:data? data.items : [], loading, refresh, deletePreset, createPreset, getPreset}
 }

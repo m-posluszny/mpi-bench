@@ -9,9 +9,12 @@ from misc import misc_routes
 from bin import bin_routes
 from runs import runs_routes
 from presets import preset_routes
-from worker import db
+from worker import get_db
 from watchdog import Watchdog
 import sys
+
+
+db = get_db()
 
 
 def receive_signal(signalNumber, frame):

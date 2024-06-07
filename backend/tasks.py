@@ -8,7 +8,7 @@ from time import time
 from uuid import UUID
 from subprocess import Popen
 import subprocess
-from worker import worker_app, db
+from worker import worker_app, get_db
 from runs.runs_model import Status, Run
 from runs import runs_db
 from bin.bin_models import BinMeta
@@ -52,6 +52,7 @@ def delete_bin(binary_path: str):
 
 @worker_app.task
 def run_benchmark(run_uid: UUID):
+    db = get_db()
     try:
         for cur in db.db_cursor():
             run = runs_db.get(cur, run_uid)

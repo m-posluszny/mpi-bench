@@ -5,6 +5,9 @@ from db.driver import DbDriver
 
 from config import DATABASE_CONFIG
 
-db = DbDriver(**DATABASE_CONFIG)
+
+def get_db():
+    return DbDriver(**DATABASE_CONFIG)
+
 
 worker_app = Celery(broker=BROKER_URL)
