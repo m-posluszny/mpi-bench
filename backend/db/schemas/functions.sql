@@ -119,9 +119,6 @@ BEGIN
         LOOP
             CALL create_run(i_bin_uid, i_owner_uid, param.uid, job_uid, buff);
         END LOOP;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE;
 END;
 $$;
 

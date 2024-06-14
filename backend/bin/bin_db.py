@@ -10,6 +10,23 @@ def create(cur, uid: UUID, owner_uid: UUID, path: str):
     )
 
 
+def update_meta(cur: cursor, uid: UUID, meta: BinMetaRequest):
+    fields = BinMetaRequest.fields_set()
+    print(fields, meta.to_list())
+    cur.execute(
+        f"update binaries set {fields} where uid = %s",
+        (*meta.to_list(), str(uid)),
+    )
+    return get(cur, uid)
+
+
+def delete(cur: cursor, uid: UUID, owner_uid):
+    return cur.execute(
+        "delete from binaries where uid = %s and owner_uid = %s",
+        (str(uid), str(owner_uid)),
+    )
+
+
 def get(cur: cursor, uid: UUID):
     cur.execute(
         f"select * from bin_view where uid = %s",
@@ -44,20 +61,3 @@ def get_many(
         args.append(tag)
     cur.execute(q, args)
     return BinMeta.convert_many(cur)
-
-
-def update_meta(cur: cursor, uid: UUID, meta: BinMetaRequest):
-    fields = BinMetaRequest.fields_set()
-    print(fields, meta.to_list())
-    cur.execute(
-        f"update binaries set {fields} where uid = %s",
-        (*meta.to_list(), str(uid)),
-    )
-    return get(cur, uid)
-
-
-def delete(cur: cursor, uid: UUID, owner_uid):
-    return cur.execute(
-        "delete from binaries where uid = %s and owner_uid = %s",
-        (str(uid), str(owner_uid)),
-    )

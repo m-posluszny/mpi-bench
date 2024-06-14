@@ -54,7 +54,8 @@ CREATE TABLE
         binary_uid UUID NOT NULL,
         created TIMESTAMP NOT NULL,
         FOREIGN KEY (owner_uid) REFERENCES users (uid) ON DELETE CASCADE,
-        FOREIGN KEY (preset_uid) REFERENCES presets (uid) ON DELETE CASCADE
+        FOREIGN KEY (preset_uid) REFERENCES presets (uid) ON DELETE CASCADE,
+        FOREIGN KEY (binary_uid) REFERENCES binaries (uid) ON DELETE CASCADE
     );
 
 CREATE TABLE
